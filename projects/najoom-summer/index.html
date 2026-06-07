@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Najoom Summer Experience — A premium summer adventure for children at Dunes Club, Amman.">
+  <title>Najoom Summer Experience</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+  <!-- Firebase SDK (for live sync with Ops dashboard) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <style>
+    :root {
+      --red:    #C02A2A; --red-dk: #8B1E1E; --red-lt: #F5E8E8;
+      --gold:   #E8A820; --gold-dk:#C48A10; --gold-lt:#FDF3D8;
+      --white:  #FFFFFF; --cream:  #FFFBF7; --cream2: #FFF5EC;
+      --dark:   #1A1212; --txt:    #1A1212; --txt-mid:#4A3535; --txt-lt: #8A6A6A;
+      --sans:   'Poppins', sans-serif;
+      --serif:  'Cormorant Garamond', Georgia, serif;
+      --ease:   cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); background: var(--cream); color: var(--txt); overflow-x: hidden; }
+    [lang="ar"] body { font-family: 'Cairo', sans-serif; }
+    [lang="ar"] .hero-h1 { line-height: 1.18; }
+    [lang="ar"] .hero-sub { line-height: 1.9; font-size: clamp(.92rem,1.5vw,1.05rem); }
+    [lang="ar"] .age-desc { font-size: .88rem; line-height: 1.78; }
+    [lang="ar"] .price-card-desc { font-size: .82rem; line-height: 1.72; }
+    [lang="ar"] .price-main-desc { font-size: .88rem; line-height: 1.78; }
+    [lang="ar"] .hiw-desc { font-size: .88rem; line-height: 1.8; }
+    [lang="ar"] .reg-sub { font-size: .92rem; line-height: 1.85; }
+    [lang="ar"] .reg-note { font-size: .82rem; line-height: 1.75; }
+    [lang="ar"] .ok-p { font-size: .9rem; line-height: 1.82; }
+    [lang="ar"] .fri-h { line-height: 1.3; }
+    [lang="ar"] .fri-item { font-size: .88rem; }
+    a { text-decoration: none; color: inherit; }
+    img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+    /* ANIM */
+    .fu { opacity: 0; transform: translateY(28px); transition: opacity .65s var(--ease), transform .65s var(--ease); }
+    .fi { opacity: 0; transition: opacity .85s var(--ease); }
+    .on { opacity: 1 !important; transform: none !important; }
+    .d1{transition-delay:.1s} .d2{transition-delay:.2s} .d3{transition-delay:.3s} .d4{transition-delay:.4s} .d5{transition-delay:.5s}
+
+    /* BTN */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--sans); font-size: .75rem; font-weight: 700;
+      letter-spacing: .04em; text-transform: uppercase;
+      padding: 16px 32px; border-radius: 999px; cursor: pointer; border: none;
+      transition: all .3s var(--ease);
+    }
+    [lang="ar"] .btn { font-family: 'Cairo', sans-serif; letter-spacing: 0; }
+    .btn-gold { background: var(--gold); color: #fff; box-shadow: 0 6px 24px rgba(232,168,32,.35); }
+    .btn-gold:hover { background: var(--gold-dk); transform: translateY(-2px); }
+    .btn-outline-white { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,.55); }
+    .btn-outline-white:hover { background: rgba(255,255,255,.1); border-color: #fff; }
+    .btn-red { background: var(--red); color: #fff; box-shadow: 0 6px 24px rgba(192,42,42,.3); }
+    .btn-red:hover { background: var(--red-dk); transform: translateY(-2px); }
+
+    /* ── LANG TOGGLE ── */
+    .lang-toggle {
+      font-family: var(--sans); font-size: .68rem; font-weight: 700;
+      letter-spacing: .08em; padding: 8px 16px; border-radius: 999px;
+      background: rgba(255,255,255,.13); border: 1px solid rgba(255,255,255,.28);
+      color: rgba(255,255,255,.8); cursor: pointer; transition: all .25s; flex-shrink: 0;
+    }
+    #nav.solid .lang-toggle { background: rgba(26,18,18,.06); border-color: rgba(26,18,18,.14); color: var(--txt-mid); }
+    .lang-toggle:hover { background: rgba(255,255,255,.22); color: #fff; }
+    #nav.solid .lang-toggle:hover { background: rgba(26,18,18,.1); color: var(--txt); }
+
+    /* ── NAV ── */
+    #nav {
+      position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+      padding: 18px 5%; display: flex; justify-content: space-between; align-items: center; gap: 16px;
+      transition: all .4s var(--ease);
+    }
+    #nav.solid {
+      background: rgba(255,251,247,.97); backdrop-filter: blur(12px);
+      padding: 12px 5%; box-shadow: 0 2px 20px rgba(26,18,18,.08);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .nav-star {
+      width: 36px; height: 36px; background: var(--red-dk); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; transition: transform .3s;
+    }
+    .nav-star:hover { transform: rotate(20deg); }
+    .nav-name { font-size: 1.05rem; font-weight: 800; color: #fff; letter-spacing: .04em; transition: color .4s; }
+    #nav.solid .nav-name { color: var(--txt); }
+    .nav-name span { color: var(--gold); }
+    .nav-links { display: flex; align-items: center; gap: 24px; }
+    .nav-link {
+      font-size: .68rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
+      color: rgba(255,255,255,.65); transition: color .3s; cursor: pointer; white-space: nowrap;
+    }
+    [lang="ar"] .nav-link { font-family: 'Cairo', sans-serif; letter-spacing: 0; text-transform: none; }
+    #nav.solid .nav-link { color: var(--txt-mid); }
+    .nav-link:hover { color: var(--gold); }
+    #nav.solid .nav-link:hover { color: var(--red); }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    .nav-btn {
+      font-family: var(--sans); font-size: .66rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      padding: 10px 22px; border-radius: 999px; background: rgba(255,255,255,.14);
+      color: #fff; border: 1px solid rgba(255,255,255,.24); cursor: pointer;
+      transition: all .3s var(--ease); backdrop-filter: blur(6px); flex-shrink: 0; white-space: nowrap;
+    }
+    [lang="ar"] .nav-btn { font-family: 'Cairo', sans-serif; letter-spacing: 0; text-transform: none; }
+    #nav.solid .nav-btn { background: var(--red); color: #fff; border-color: transparent; box-shadow: 0 3px 14px rgba(192,42,42,.3); }
+    .nav-btn:hover { transform: translateY(-1px); }
+
+    /* ── FLOAT ── */
+    #floats { position: fixed; bottom: 24px; right: 20px; z-index: 990; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+    [dir="rtl"] #floats { right: unset; left: 20px; align-items: flex-start; }
+    .f-reserve {
+      font-family: var(--sans); font-size: .64rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      padding: 12px 22px; border-radius: 999px;
+      background: var(--red); color: #fff; border: none; cursor: pointer;
+      box-shadow: 0 6px 24px rgba(192,42,42,.45);
+      opacity: 0; transform: translateY(14px); transition: all .4s var(--ease);
+    }
+    [lang="ar"] .f-reserve { font-family: 'Cairo', sans-serif; letter-spacing: 0; text-transform: none; }
+    .f-reserve.show { opacity: 1; transform: translateY(0); }
+    .f-reserve:hover { background: var(--red-dk); transform: translateY(-2px) !important; }
+    .f-wa {
+      width: 50px; height: 50px; border-radius: 50%; background: #25D366;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 18px rgba(37,211,102,.42); transition: transform .3s;
+    }
+    .f-wa:hover { transform: scale(1.1); }
+    .f-wa svg { width: 24px; height: 24px; fill: white; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh; background: var(--red-dk);
+      background-image: url('images/hero.jpg');
+      background-size: cover; background-position: center;
+      position: relative; display: flex; align-items: center; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(105deg, rgba(20,6,6,.88) 0%, rgba(20,6,6,.62) 50%, rgba(20,6,6,.28) 100%);
+    }
+    .hero-content { position: relative; z-index: 2; padding: 140px 5% 100px; max-width: 680px; }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,.12); backdrop-filter: blur(8px);
+      padding: 7px 16px; border-radius: 999px;
+      font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: rgba(255,255,255,.85); margin-bottom: 26px;
+    }
+    [lang="ar"] .hero-tag { font-family: 'Cairo', sans-serif; letter-spacing: 0; text-transform: none; }
+    .hero-tag span { color: var(--gold); }
+    .hero-h1 {
+      font-size: clamp(3rem, 7.5vw, 6.5rem); font-weight: 900; color: #fff;
+      line-height: 1.0; letter-spacing: -.025em; margin-bottom: 22px;
+    }
+    [lang="ar"] .hero-h1 { font-family: 'Cairo', sans-serif; letter-spacing: 0; line-height: 1.15; }
+    .hero-h1 em { color: var(--gold); font-style: italic; font-family: var(--serif); font-weight: 600; }
+    [lang="ar"] .hero-h1 em { font-family: 'Cairo', sans-serif; font-style: normal; font-weight: 800; }
+    .hero-sub {
+      font-size: clamp(.88rem, 1.4vw, 1rem); color: rgba(255,255,255,.65);
+      line-height: 1.75; max-width: 460px; margin-bottom: 36px;
+    }
+    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+    .hero-stats {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      display: flex; gap: 40px; justify-content: flex-end;
+      background: rgba(0,0,0,.22); backdrop-filter: blur(8px); padding: 18px 5%;
+    }
+    [dir="rtl"] .hero-stats { justify-content: flex-start; }
+    .hst-n { font-size: 1.7rem; font-weight: 800; color: var(--gold); line-height: 1; }
+    .hst-l { font-size: .58rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.38); margin-top: 3px; }
+    [lang="ar"] .hst-l { font-family: 'Cairo', sans-serif; letter-spacing: 0; text-transform: none; font-size: .68rem; }
+
+    /* ── DATE STRIP ── */
+    #datestrip {
+      background: #fff; border-bottom: 1px solid rgba(26,18,18,.07);
+      display: flex; align-items: stretch; justify-content: center; gap: 0;
+      box-shadow: 0 4px 24px rgba(26,18,18,.06);
+    }
+    .ds-item {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 4px; padding: 22px 40px; text-align: center; position: relative;
+    }
+    .ds-item::before {
+      content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 28px; height: 3px; background: var(--red); border-radius: 0 0 3px 3px;
+    }
+    .ds-icon { display: none; }
+    .ds-label {
+      font-size: .58rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--txt-lt);
+    }
+    .ds-val { font-size: .95rem; font-weight: 800; color: var(--dark); white-space: nowrap; }
+    .ds-val strong { color: var(--red); font-weight: 900; }
+    [lang="ar"] .ds-item { font-family: 'Cairo', sans-serif; }
+    [lang="ar"] .ds-label { letter-spacing: 0; font-size: .64rem; }
+    [lang="ar"] .ds-val { font-size: 1rem; white-space: normal; }
+    .ds-sep {
+      width: 1px; background: rgba(26,18,18,.08); align-self: stretch; margin: 16px 0; flex-shrink: 0;
+    }
+
+    /* ── ACTIVITY STRIP ── */
+    #activities { display: grid; grid-template-columns: repeat(5, 1fr); height: clamp(240px, 33vw, 460px); }
+    .act-card { position: relative; overflow: hidden; cursor: pointer; }
+    .act-card img { transition: transform .6s var(--ease); }
+    .act-card:hover img { transform: scale(1.06); }
+    .act-veil { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.78) 0%, transparent 55%); }
+    .act-label {
+      position: absolute; bottom: 18px; left: 18px;
+      font-size: .74rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #fff;
+    }
+    [dir="rtl"] .act-label { left: unset; right: 18px; text-transform: none; letter-spacing: 0; font-family: 'Cairo', sans-serif; }
+    .act-emoji { display: block; font-size: 1.3rem; margin-bottom: 4px; }
+
+    /* ── AGE GROUPS ── */
+    #ages { padding: clamp(60px,8vw,100px) 5%; background: var(--red-dk); position: relative; overflow: hidden; }
+    .ages-bg { position: absolute; top: -60px; right: -60px; opacity: .04; pointer-events: none; }
+    [dir="rtl"] .ages-bg { right: unset; left: -60px; }
+    .ages-hd { text-align: center; margin-bottom: 48px; }
+    .ages-hd h2 { font-size: clamp(2rem,4vw,3rem); font-weight: 800; color: #fff; }
+    .ages-hd p { color: rgba(255,255,255,.5); font-size: .9rem; margin-top: 8px; }
+    .ages-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+    .age-card {
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
+      border-top: 3px solid var(--gold);
+      border-radius: 24px; padding: 36px 28px; position: relative; overflow: hidden;
+      transition: background .35s, transform .35s;
+    }
+    .age-card:hover { background: rgba(255,255,255,.12); transform: translateY(-4px); }
+    .age-num { display: none; }
+    .age-badge {
+      display: inline-block; font-size: .58rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 10px;
+    }
+    [lang="ar"] .age-badge { font-family: 'Cairo', sans-serif; letter-spacing: 0; text-transform: none; font-size: .7rem; }
+    .age-range {
+      font-size: clamp(2.2rem,3.5vw,2.8rem); font-weight: 900; color: #fff;
+      line-height: 1; letter-spacing: -.02em; margin-bottom: 0;
+    }
+    .age-title { display: none; }
+    .age-desc {
+      font-size: .82rem; color: rgba(255,255,255,.55); line-height: 1.7;
+      margin-top: 18px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.1);
+    }
+    .age-acts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
+    .age-act { font-size: .62rem; font-weight: 600; padding: 5px 12px; border-radius: 999px; background: rgba(232,168,32,.15); color: rgba(232,168,32,.85); border: 1px solid rgba(232,168,32,.2); }
+
+    /* ── PRICING ── */
+    #pricing { padding: clamp(60px,8vw,100px) 5%; background: var(--cream2); }
+    .pricing-wrap { max-width: 1100px; margin: 0 auto; }
+    .pricing-hd { text-align: center; margin-bottom: 52px; }
+    .section-tag {
+      display: inline-block; font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      padding: 6px 18px; border-radius: 50px; margin-bottom: 14px;
+    }
+    [lang="ar"] .section-tag { font-family: 'Cairo', sans-serif; letter-spacing: 0; text-transform: none; font-size: .8rem; }
+    .tag-red { background: var(--red-lt); color: var(--red-dk); }
+    .tag-gold { background: var(--gold-lt); color: var(--gold-dk); }
+    .tag-white { background: rgba(255,255,255,.12); color: rgba(255,255,255,.7); }
+    .pricing-hd h2 { font-size: clamp(2rem,4vw,3rem); font-weight: 800; color: var(--txt); }
+    .pricing-hd p { color: var(--txt-lt); font-size: .9rem; margin-top: 8px; }
+    .price-main {
+      background: var(--red-dk); border-radius: 28px;
+      padding: clamp(36px,5vw,68px) clamp(32px,5vw,80px);
+      display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: center;
+      margin-bottom: 20px; position: relative; overflow: hidden;
+    }
+    .price-main-star { position: absolute; right: -40px; top: -40px; opacity: .06; pointer-events: none; }
+    [dir="rtl"] .price-main-star { right: unset; left: -40px; }
+    .price-main-label { font-size: .65rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 10px; }
+    [lang="ar"] .price-main-label { font-family: 'Cairo', sans-serif; letter-spacing: 0; text-transform: none; font-size: .76rem; }
+    .price-main-title { font-size: clamp(1.3rem,3vw,1.9rem); font-weight: 800; color: #fff; margin-bottom: 14px; }
+    .price-main-desc { font-size: .85rem; color: rgba(255,255,255,.58); line-height: 1.7; max-width: 480px; }
+    .price-main-num { text-align: center; flex-shrink: 0; position: relative; z-index: 1; }
+    .price-main-num .big { font-size: clamp(3.5rem,7vw,5.5rem); font-weight: 900; color: var(--gold); line-height: 1; letter-spacing: -.03em; }
+    .price-main-num .unit { font-size: .76rem; font-weight: 700; color: rgba(255,255,255,.45); letter-spacing: .08em; text-transform: uppercase; margin-top: 4px; }
+    [lang="ar"] .price-main-num .unit { font-family: 'Cairo', sans-serif; letter-spacing: 0; text-transform: none; font-size: .84rem; }
+    .cards-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 20px; }
+    .cards-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 44px; }
+    .price-card { background: #fff; border-radius: 20px; padding: 26px 28px; border: 2px solid rgba(26,18,18,.06); }
+    .price-card-icon { font-size: 1.5rem; margin-bottom: 12px; }
+    .price-card-type { font-size: .62rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-lt); margin-bottom: 6px; }
+    [lang="ar"] .price-card-type { font-family: 'Cairo', sans-serif; letter-spacing: 0; text-transform: none; font-size: .72rem; }
+    .price-card-title { font-size: 1.05rem; font-weight: 700; color: var(--txt); margin-bottom: 6px; }
+    .price-card-amount { font-size: 1.35rem; font-weight: 800; color: var(--red); }
+    .price-card-amount .unit { font-size: .75rem; font-weight: 500; color: var(--txt-lt); }
+    .price-card-amount.gold { color: var(--gold-dk); }
+    .price-card-desc { font-size: .77rem; color: var(--txt-lt); margin-top: 8px; line-height: 1.65; }
+
+    /* ── HOW IT WORKS ── */
+    #howitworks { padding: clamp(60px,8vw,90px) 5%; background: var(--cream); }
+    .hiw-wrap { max-width: 1100px; margin: 0 auto; }
+    .hiw-hd { text-align: center; margin-bottom: 52px; }
+    .hiw-hd h2 { font-size: clamp(1.8rem,3.5vw,2.8rem); font-weight: 800; color: var(--txt); }
+    .hiw-steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+    .hiw-step { text-align: center; padding: 38px 28px; background: #fff; border-radius: 24px; border: 2px solid rgba(26,18,18,.05); position: relative; }
+    .hiw-num { width: 52px; height: 52px; border-radius: 50%; background: var(--red-dk); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 900; color: #fff; margin: 0 auto 18px; }
+    .hiw-icon { font-size: 1.8rem; margin-bottom: 12px; }
+    .hiw-title { font-size: 1.1rem; font-weight: 700; color: var(--txt); margin-bottom: 10px; }
+    .hiw-desc { font-size: .83rem; color: var(--txt-lt); line-height: 1.7; }
+    .hiw-arrow { position: absolute; right: -18px; top: 50%; transform: translateY(-50%); font-size: 1.5rem; color: rgba(26,18,18,.14); font-weight: 900; z-index: 1; pointer-events: none; }
+    [dir="rtl"] .hiw-arrow { right: unset; left: -18px; transform: translateY(-50%) scaleX(-1); }
+
+    /* ── SCHEDULE ── */
+    #schedule { padding: clamp(60px,8vw,100px) 5%; background: var(--red-dk); }
+    .sched-wrap { max-width: 1100px; margin: 0 auto; }
+    .sched-hd { text-align: center; margin-bottom: 44px; }
+    .sched-hd h2 { font-family: var(--serif); font-style: italic; font-size: clamp(2rem,4vw,3rem); color: #fff; }
+    [lang="ar"] .sched-hd h2 { font-family: 'Cairo', sans-serif; font-style: normal; }
+    .sched-hd p { color: rgba(255,255,255,.5); font-size: .88rem; margin-top: 8px; }
+    .sched-days { display: grid; grid-template-columns: repeat(6,1fr); gap: 12px; }
+    .sched-day { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.1); border-radius: 18px; padding: 22px 14px; text-align: center; }
+    .sched-day.fri { background: rgba(232,168,32,.18); border-color: rgba(232,168,32,.3); }
+    .sched-day-name { font-size: .62rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 10px; }
+    [lang="ar"] .sched-day-name { font-family: 'Cairo', sans-serif; letter-spacing: 0; text-transform: none; font-size: .72rem; }
+    .sched-day.fri .sched-day-name { color: var(--gold); }
+    .sched-day-items { display: flex; flex-direction: column; gap: 7px; }
+    .sched-item { font-size: .68rem; font-weight: 600; padding: 5px 8px; border-radius: 8px; background: rgba(255,255,255,.09); color: rgba(255,255,255,.8); }
+    .sched-day.fri .sched-item { background: rgba(232,168,32,.15); }
+    .sched-time { font-size: .6rem; font-weight: 500; color: rgba(255,255,255,.32); margin-top: 10px; }
+    [lang="ar"] .sched-time { font-family: 'Cairo', sans-serif; font-size: .68rem; }
+
+    /* ── FAMILY FRIDAYS ── */
+    #fridays { padding: clamp(60px,8vw,100px) 5%; background: var(--gold-lt); }
+    .fri-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; max-width: 1100px; margin: 0 auto; }
+    .fri-photo { border-radius: 24px; overflow: hidden; aspect-ratio: 4/5; position: relative; }
+    .fri-photo img { border-radius: 24px; }
+    .fri-badge { position: absolute; top: 20px; right: 20px; background: var(--gold); border-radius: 16px; padding: 14px 22px; text-align: center; box-shadow: 0 8px 24px rgba(232,168,32,.45); }
+    [dir="rtl"] .fri-badge { right: unset; left: 20px; }
+    .fri-badge-day { font-size: 1.9rem; font-weight: 900; color: #fff; line-height: 1; }
+    .fri-badge-sub { font-size: .56rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.75); }
+    [lang="ar"] .fri-badge-sub { font-family: 'Cairo', sans-serif; letter-spacing: 0; text-transform: none; font-size: .66rem; }
+    .fri-label { font-size: .62rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--red); margin-bottom: 12px; }
+    [lang="ar"] .fri-label { font-family: 'Cairo', sans-serif; letter-spacing: 0; text-transform: none; font-size: .76rem; }
+    .fri-h { font-size: clamp(1.7rem,3.5vw,2.8rem); font-weight: 800; color: var(--txt); line-height: 1.1; margin-bottom: 18px; }
+    [lang="ar"] .fri-h { line-height: 1.25; }
+    .fri-list { display: flex; flex-direction: column; gap: 14px; margin-top: 26px; }
+    .fri-item { display: flex; align-items: center; gap: 14px; font-size: .84rem; font-weight: 500; color: var(--txt-mid); }
+    .fri-icon { width: 36px; height: 36px; border-radius: 50%; background: var(--gold); display: flex; align-items: center; justify-content: center; font-size: .9rem; flex-shrink: 0; }
+
+    /* ── REGISTER ── */
+    #register { padding: clamp(60px,8vw,100px) 5%; background: var(--cream); }
+    .reg-inner { display: grid; grid-template-columns: 1fr 1.3fr; gap: 80px; align-items: start; max-width: 1100px; margin: 0 auto; }
+    .reg-pin { position: sticky; top: 110px; }
+    .reg-label { font-size: .62rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--red); margin-bottom: 12px; }
+    [lang="ar"] .reg-label { font-family: 'Cairo', sans-serif; letter-spacing: 0; text-transform: none; font-size: .76rem; }
+    .reg-h { font-size: clamp(2.2rem,4vw,3.4rem); font-weight: 800; color: var(--txt); line-height: 1.1; margin-bottom: 16px; }
+    [lang="ar"] .reg-h { line-height: 1.25; }
+    .reg-sub { font-size: .9rem; color: var(--txt-lt); line-height: 1.75; }
+    .reg-note { margin-top: 26px; padding: 16px 20px; background: var(--gold-lt); border-left: 4px solid var(--gold); border-radius: 0 12px 12px 0; font-size: .78rem; font-weight: 500; color: var(--txt-mid); line-height: 1.7; }
+    [dir="rtl"] .reg-note { border-left: none; border-right: 4px solid var(--gold); border-radius: 12px 0 0 12px; }
+    .reg-contact { margin-top: 18px; font-size: .8rem; color: var(--txt-mid); }
+    .reg-contact a { font-weight: 700; color: var(--red); }
+    .reg-form { background: #fff; border-radius: 28px; padding: 44px 40px; box-shadow: 0 8px 48px rgba(26,18,18,.07); }
+    .form-title { font-size: 1rem; font-weight: 700; color: var(--txt); margin-bottom: 26px; padding-bottom: 16px; border-bottom: 2px solid rgba(26,18,18,.05); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .fg { margin-bottom: 18px; }
+    .fl { display: block; font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-lt); margin-bottom: 8px; }
+    [lang="ar"] .fl { font-family: 'Cairo', sans-serif; letter-spacing: 0; text-transform: none; font-size: .76rem; }
+    .fi-in, .fi-sel {
+      width: 100%; padding: 13px 16px;
+      border: 2px solid rgba(26,18,18,.08); border-radius: 12px;
+      background: var(--cream); font-family: var(--sans); font-size: .86rem; color: var(--txt);
+      outline: none; transition: border-color .25s, background .25s; -webkit-appearance: none;
+    }
+    [lang="ar"] .fi-in, [lang="ar"] .fi-sel { font-family: 'Cairo', sans-serif; text-align: right; }
+    .fi-in:focus, .fi-sel:focus { border-color: var(--red); background: #fff; }
+    .fi-in::placeholder { color: rgba(138,106,106,.38); }
+    .sel-wrap { position: relative; }
+    .sel-wrap::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--txt-lt); pointer-events: none; }
+    [dir="rtl"] .sel-wrap::after { right: unset; left: 14px; }
+    .form-hint { font-size: .73rem; color: var(--txt-lt); margin-top: 5px; padding-left: 2px; }
+    [dir="rtl"] .form-hint { padding-left: 0; padding-right: 2px; }
+    .f-submit {
+      width: 100%; padding: 17px; border-radius: 14px;
+      background: var(--red); color: #fff; border: none;
+      font-family: var(--sans); font-size: .76rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase; cursor: pointer;
+      transition: all .3s var(--ease); margin-top: 6px;
+      box-shadow: 0 6px 20px rgba(192,42,42,.3);
+    }
+    [lang="ar"] .f-submit { font-family: 'Cairo', sans-serif; letter-spacing: 0; text-transform: none; font-size: .9rem; }
+    .f-submit:hover { background: var(--red-dk); transform: translateY(-2px); }
+    .f-submit:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+    .form-ok { display: none; text-align: center; padding: 44px 24px; }
+    .form-ok.show { display: block; }
+    .ok-star { margin-bottom: 20px; animation: bob 3s ease-in-out infinite; }
+    .ok-h { font-size: 1.5rem; font-weight: 800; color: var(--txt); margin-bottom: 10px; }
+    .ok-p { font-size: .86rem; color: var(--txt-lt); line-height: 1.7; }
+    .ok-wa { display: inline-flex; align-items: center; gap: 8px; margin-top: 20px; padding: 12px 24px; background: #25D366; color: #fff; border-radius: 999px; font-size: .76rem; font-weight: 700; }
+    [lang="ar"] .ok-wa { font-family: 'Cairo', sans-serif; }
+
+    /* ── FOOTER ── */
+    footer { padding: 36px 5%; background: var(--dark); }
+    .ft-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 24px; margin-bottom: 28px; }
+    .ft-left { display: flex; align-items: center; gap: 10px; }
+    .ft-star { width: 34px; height: 34px; background: var(--red-dk); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .ft-name { font-size: 1rem; font-weight: 800; color: #fff; }
+    .ft-name span { color: var(--gold); }
+    .ft-sub { font-size: .62rem; font-weight: 500; letter-spacing: .06em; color: rgba(255,255,255,.22); margin-top: 3px; }
+    [lang="ar"] .ft-sub { font-family: 'Cairo', sans-serif; letter-spacing: 0; font-size: .72rem; }
+    .ft-links { display: flex; gap: 20px; flex-wrap: wrap; }
+    .ft-link { font-size: .68rem; font-weight: 600; color: rgba(255,255,255,.35); transition: color .25s; }
+    [lang="ar"] .ft-link { font-family: 'Cairo', sans-serif; font-size: .78rem; }
+    .ft-link:hover { color: var(--gold); }
+    .ft-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.07); }
+    .ft-copy { font-size: .6rem; color: rgba(255,255,255,.18); }
+    [lang="ar"] .ft-copy { font-family: 'Cairo', sans-serif; font-size: .7rem; }
+    .ft-contact { font-size: .68rem; color: rgba(255,255,255,.3); }
+    [lang="ar"] .ft-contact { font-family: 'Cairo', sans-serif; font-size: .78rem; }
+    .ft-contact a { color: rgba(255,255,255,.5); transition: color .25s; }
+    .ft-contact a:hover { color: var(--gold); }
+
+    @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:960px) {
+      .nav-links { display: none; }
+      #activities { grid-template-columns: repeat(3,1fr); height: auto; }
+      #activities .act-card { aspect-ratio: 1; }
+      #activities .act-card:nth-child(n+4) { display: none; }
+      .ages-grid { grid-template-columns: 1fr; gap: 14px; }
+      .cards-grid { grid-template-columns: 1fr 1fr; }
+      .sched-days { grid-template-columns: repeat(3,1fr); }
+      .fri-inner, .reg-inner { grid-template-columns: 1fr; gap: 40px; }
+      .reg-pin { position: relative; top: unset; }
+      .hiw-steps { grid-template-columns: 1fr; }
+      .hiw-arrow { display: none; }
+      .price-main { grid-template-columns: 1fr; }
+      .price-main-num { text-align: left; }
+      [dir="rtl"] .price-main-num { text-align: right; }
+    }
+    @media(max-width:640px) {
+      /* NAV — hide redundant register button; float CTA handles it */
+      .nav-btn { display: none; }
+
+      /* HERO — fix image crop + lighten overlay so photo shows */
+      #hero { background-position: center 20%; }
+      .hero-bg { background: linear-gradient(to bottom, rgba(20,6,6,.82) 0%, rgba(20,6,6,.38) 52%, rgba(20,6,6,.76) 100%); }
+      .hero-content { padding: 94px 6% 72px; max-width: 100%; }
+      .hero-h1 { font-size: clamp(2.4rem, 10vw, 3rem); }
+      .hero-btns { flex-direction: column; }
+      .btn { justify-content: center; }
+      .hero-stats { gap: 0; justify-content: space-around; padding: 14px 5%; }
+      .hst-n { font-size: 1.3rem; }
+      .hst-l { font-size: .55rem; }
+
+      /* DATE STRIP — clean 2×2 grid */
+      #datestrip { display: grid; grid-template-columns: 1fr 1fr; gap: 0; background: #fff; box-shadow: none; border-bottom: 1px solid rgba(26,18,18,.07); }
+      .ds-sep { display: none; }
+      .ds-item { padding: 20px 10px; border-right: 1px solid rgba(26,18,18,.07); border-bottom: 1px solid rgba(26,18,18,.07); }
+      .ds-item:nth-child(3) { border-right: none; }
+      .ds-item:nth-child(5), .ds-item:nth-child(7) { border-bottom: none; }
+
+      /* ACTIVITIES */
+      #activities { grid-template-columns: repeat(2,1fr); }
+      #activities .act-card:nth-child(n+4) { display: block; }
+      #activities .act-card:nth-child(5) { display: none; }
+
+      /* PRICING */
+      .cards-grid { grid-template-columns: 1fr; }
+      .cards-grid-2 { grid-template-columns: 1fr; }
+
+      /* SCHEDULE */
+      .sched-days { grid-template-columns: repeat(2,1fr); }
+
+      /* FORM */
+      .form-row { grid-template-columns: 1fr; }
+      .reg-form { padding: 32px 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="s7" viewBox="0 0 100 100">
+    <polygon points="50,0 59.5,30.2 89.1,18.8 71.5,45.1 98.8,61.1 67.2,63.7 71.7,95.1 50,72 28.3,95.1 32.8,63.7 1.2,61.1 28.5,45.1 10.9,18.8 40.5,30.2"/>
+  </symbol>
+</svg>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo">
+    <div class="nav-star">
+      <svg viewBox="0 0 100 100" style="width:17px;height:17px;fill:var(--gold);"><use href="#s7"/></svg>
+    </div>
+    <span class="nav-name">NAJ<span>O</span>OM</span>
+  </div>
+  <div class="nav-links">
+    <a href="#activities" class="nav-link" data-i18n="nav_activities">Activities</a>
+    <a href="#ages"       class="nav-link" data-i18n="nav_ages">Age Groups</a>
+    <a href="#pricing"    class="nav-link" data-i18n="nav_pricing">Pricing</a>
+    <a href="#schedule"   class="nav-link" data-i18n="nav_schedule">Schedule</a>
+    <a href="schedule.html" class="nav-link" data-i18n="nav_full_sched">Full Schedule</a>
+  </div>
+  <div class="nav-right">
+    <button class="lang-toggle" onclick="toggleLang()" id="langToggle">عربي</button>
+    <a href="#register" class="nav-btn" data-i18n="nav_btn">★ Reserve a Spot</a>
+  </div>
+</nav>
+
+<!-- FLOATING -->
+<div id="floats">
+  <a href="#register" class="f-reserve" id="fReserve" data-i18n="nav_btn">★ Reserve a Spot</a>
+  <a href="https://wa.me/962799176917" class="f-wa" target="_blank" rel="noopener" aria-label="WhatsApp">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+  </a>
+</div>
+
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-tag fu" data-i18n-html="hero_tag"><span>★</span> Dunes Club, Amman &nbsp;·&nbsp; Summer 2026</div>
+    <h1 class="hero-h1 fu d1" data-i18n-html="hero_h1">A Summer<br>They <em>Will Remember</em></h1>
+    <div class="hero-btns fu d3">
+      <a href="#register" class="btn btn-gold" data-i18n="hero_btn1">★ Reserve a Spot</a>
+      <a href="#activities" class="btn btn-outline-white" data-i18n="hero_btn2">See the Experience</a>
+    </div>
+  </div>
+  <div class="hero-stats fi d4">
+    <div><div class="hst-n">5</div><div class="hst-l" data-i18n="stat_tracks_l">Activity Tracks</div></div>
+    <div><div class="hst-n">3</div><div class="hst-l" data-i18n="stat_groups_l">Age Groups</div></div>
+    <div><div class="hst-n">300</div><div class="hst-l" data-i18n="stat_spots_l">Spots Available</div></div>
+  </div>
+</section>
+
+
+<!-- DATE STRIP -->
+<div id="datestrip">
+  <div class="ds-item">
+    <div class="ds-label" data-i18n="strip_open_label">Opening Day</div>
+    <div class="ds-val" data-i18n-html="strip_open_val"><strong>June 21, 2026</strong></div>
+  </div>
+  <div class="ds-sep"></div>
+  <div class="ds-item">
+    <div class="ds-label" data-i18n="strip_loc_label">Location</div>
+    <div class="ds-val" data-i18n="strip_loc_val">Dunes Club, Amman</div>
+  </div>
+  <div class="ds-sep"></div>
+  <div class="ds-item">
+    <div class="ds-label" data-i18n="strip_hours_label">Hours</div>
+    <div class="ds-val" data-i18n="strip_hours_val">Sun – Thu · 7:30 – 1:30</div>
+  </div>
+  <div class="ds-sep"></div>
+  <div class="ds-item">
+    <div class="ds-label" data-i18n="strip_ages_label">Ages</div>
+    <div class="ds-val" data-i18n="strip_ages_val">4 – 14 Years</div>
+  </div>
+</div>
+
+
+<!-- ACTIVITY STRIP -->
+<div id="activities">
+  <div class="act-card fi">
+    <img src="images/art.jpg" alt="Art" onerror="this.src='images/04.jpg'">
+    <div class="act-veil"></div>
+    <div class="act-label"><span class="act-emoji">🎨</span><span data-i18n="act_art">Art & Creativity</span></div>
+  </div>
+  <div class="act-card fi d1">
+    <img src="images/pool.jpg" alt="Swimming" onerror="this.src='images/13.jpg'">
+    <div class="act-veil"></div>
+    <div class="act-label"><span class="act-emoji">🏊</span><span data-i18n="act_swim">Swimming</span></div>
+  </div>
+  <div class="act-card fi d2">
+    <img src="images/karate.jpg" alt="Martial Arts" onerror="this.src='images/12.jpg'">
+    <div class="act-veil"></div>
+    <div class="act-label"><span class="act-emoji">🥋</span><span data-i18n="act_martial">Martial Arts</span></div>
+  </div>
+  <div class="act-card fi d3">
+    <img src="images/story.jpg" alt="Storytelling" onerror="this.src='images/08.jpg'">
+    <div class="act-veil"></div>
+    <div class="act-label"><span class="act-emoji">📖</span><span data-i18n="act_story">Storytelling</span></div>
+  </div>
+  <div class="act-card fi d4">
+    <img src="images/explore.jpg" alt="Explore" onerror="this.src='images/05.jpg'">
+    <div class="act-veil"></div>
+    <div class="act-label"><span class="act-emoji">🔭</span><span data-i18n="act_explore">Explore & Discover</span></div>
+  </div>
+</div>
+
+
+<!-- AGE GROUPS -->
+<section id="ages">
+  <div class="ages-bg"><svg viewBox="0 0 100 100" style="width:400px;height:400px;fill:#fff;"><use href="#s7"/></svg></div>
+  <div class="ages-hd">
+    <h2 class="fu" data-i18n="ages_title">Designed for Every Age</h2>
+    <p class="fu d1" data-i18n="ages_sub">Three groups, each with its own program and coaches.</p>
+  </div>
+  <div class="ages-grid">
+    <div class="age-card fu d1">
+      <span class="age-badge" data-i18n="age1_badge">Little Stars</span>
+      <div class="age-range" data-i18n="age1_range">4 – 6</div>
+      <p class="age-desc" data-i18n="age1_desc">Creativity, movement, and imagination through play.</p>
+      <div class="age-acts"><span class="age-act">🎨 Arts</span><span class="age-act">💃 Ballet</span><span class="age-act">🏊 Swim</span></div>
+    </div>
+    <div class="age-card fu d2">
+      <span class="age-badge" data-i18n="age2_badge">Rising Stars</span>
+      <div class="age-range" data-i18n="age2_range">7 – 10</div>
+      <p class="age-desc" data-i18n="age2_desc">Skills, teamwork, sports, and real friendships.</p>
+      <div class="age-acts"><span class="age-act">🥋 Martial Arts</span><span class="age-act">🏊 Swim</span><span class="age-act">📖 Stories</span></div>
+    </div>
+    <div class="age-card fu d3">
+      <span class="age-badge" data-i18n="age3_badge">Future Stars</span>
+      <div class="age-range" data-i18n="age3_range">11 – 14</div>
+      <p class="age-desc" data-i18n="age3_desc">Leadership, confidence, and real challenge.</p>
+      <div class="age-acts"><span class="age-act">🥊 MMA</span><span class="age-act">🏊 Swim</span><span class="age-act">🔭 Explore</span></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="pricing-wrap">
+    <div class="pricing-hd">
+      <div class="fu section-tag tag-red" data-i18n="pricing_tag">Pricing</div>
+      <h2 class="fu d1" data-i18n="pricing_title">Simple, Transparent Pricing</h2>
+    </div>
+    <div class="price-main fu d1">
+      <div class="price-main-star"><svg viewBox="0 0 100 100" style="width:240px;height:240px;fill:#fff;"><use href="#s7"/></svg></div>
+      <div style="position:relative;z-index:1;">
+        <div class="price-main-label" data-i18n="price_label">Per Child · Per Month</div>
+        <div class="price-main-title" data-i18n="price_title">Full Summer Experience</div>
+        <p class="price-main-desc" data-i18n="price_desc">5 activity tracks · 3 age groups · Family Fridays · Professional coaches · Safe supervised environment</p>
+      </div>
+      <div class="price-main-num">
+        <div class="big">350</div>
+        <div class="unit" data-i18n="price_unit">JD / Month</div>
+      </div>
+    </div>
+    <div class="cards-grid fu d2">
+      <div class="price-card">
+        <div class="price-card-icon">🚌</div>
+        <div class="price-card-type" data-i18n="bus_type">Optional Add-on</div>
+        <div class="price-card-title" data-i18n="bus_title">Bus Service</div>
+        <div class="price-card-amount" data-i18n-html="bus_amount">From 150 JD<span class="unit"> /month</span></div>
+        <p class="price-card-desc" data-i18n="bus_desc">Price varies by area. Contact us to confirm your route rate.</p>
+      </div>
+      <div class="price-card">
+        <div class="price-card-icon">🕐</div>
+        <div class="price-card-type" data-i18n="ext_type">Optional Add-on</div>
+        <div class="price-card-title" data-i18n="ext_title">Extended Stay</div>
+        <div class="price-card-amount" data-i18n-html="ext_amount">7 JD<span class="unit"> /day</span></div>
+        <p class="price-card-desc" data-i18n="ext_desc">Camp ends at 1:30 PM. Supervised afternoon activities until 4 PM.</p>
+      </div>
+      <div class="price-card">
+        <div class="price-card-icon">📅</div>
+        <div class="price-card-type" data-i18n="daily_type">Drop-in</div>
+        <div class="price-card-title" data-i18n="daily_title">Daily Pass</div>
+        <div class="price-card-amount" data-i18n-html="daily_amount">35 JD<span class="unit"> /day</span></div>
+        <p class="price-card-desc" data-i18n="daily_desc">Join for a single day. Full access to all activities and tracks.</p>
+      </div>
+    </div>
+    <div class="cards-grid-2 fu d3">
+      <div class="price-card">
+        <div class="price-card-icon">👨‍👩‍👧‍👦</div>
+        <div class="price-card-type" data-i18n="sib_type">Special Offer</div>
+        <div class="price-card-title" data-i18n="sib_title">Siblings Discount</div>
+        <div class="price-card-amount gold" data-i18n-html="sib_amount">10% <span class="unit">OFF per child</span></div>
+        <p class="price-card-desc" data-i18n="sib_desc">Register two or more brothers or sisters together. Discount applies to each child.</p>
+      </div>
+      <div class="price-card">
+        <div class="price-card-icon">👥</div>
+        <div class="price-card-type" data-i18n="grp_type">Special Offer</div>
+        <div class="price-card-title" data-i18n="grp_title">Group Discount</div>
+        <div class="price-card-amount gold" data-i18n-html="grp_amount">10% <span class="unit">OFF per child</span></div>
+        <p class="price-card-desc" data-i18n="grp_desc">Registering 5 or more children from the same group or school? Everyone saves.</p>
+      </div>
+    </div>
+    <div style="text-align:center;" class="fu d4">
+      <a href="#register" class="btn btn-red" style="font-size:.78rem;padding:18px 48px;" data-i18n="price_cta">★ Reserve Your Spot</a>
+      <p style="font-size:.74rem;color:var(--txt-lt);margin-top:14px;" data-i18n="price_note">No payment now. Our team contacts you within 24 hours.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- HOW IT WORKS -->
+<section id="howitworks">
+  <div class="hiw-wrap">
+    <div class="hiw-hd">
+      <div class="fu section-tag tag-gold" data-i18n="hiw_tag">How to Join</div>
+      <h2 class="fu d1" data-i18n="hiw_title">Three Simple Steps</h2>
+    </div>
+    <div class="hiw-steps">
+      <div class="hiw-step fu d1">
+        <div class="hiw-arrow">→</div>
+        <div class="hiw-icon">📝</div>
+        <div class="hiw-num">1</div>
+        <div class="hiw-title" data-i18n="step1_title">Fill the Form</div>
+        <p class="hiw-desc" data-i18n="step1_desc">Register your interest below. Takes less than 2 minutes. No payment needed now.</p>
+      </div>
+      <div class="hiw-step fu d2">
+        <div class="hiw-arrow">→</div>
+        <div class="hiw-icon">📞</div>
+        <div class="hiw-num">2</div>
+        <div class="hiw-title" data-i18n="step2_title">We Call You</div>
+        <p class="hiw-desc" data-i18n="step2_desc">Our team reaches out within 24 hours to confirm details, answer questions, and arrange payment.</p>
+      </div>
+      <div class="hiw-step fu d3">
+        <div class="hiw-icon">🌟</div>
+        <div class="hiw-num">3</div>
+        <div class="hiw-title" data-i18n="step3_title">Your Child Joins</div>
+        <p class="hiw-desc" data-i18n="step3_desc">Show up on June 21 ready for the summer. We handle everything from there.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- WEEKLY SCHEDULE -->
+<section id="schedule">
+  <div class="sched-wrap">
+    <div class="sched-hd">
+      <div class="fu section-tag tag-white" data-i18n="sched_tag">Weekly Programme</div>
+      <h2 class="fu d1" data-i18n="sched_title">Your Child's Week at Najoom</h2>
+      <p class="fu d2" data-i18n="sched_sub">Sun – Thu program · Fri is Family Day</p>
+    </div>
+    <div class="sched-days fu d3">
+      <div class="sched-day">
+        <div class="sched-day-name" data-i18n="day_sun">Sunday</div>
+        <div class="sched-day-items"><div class="sched-item">🏊 Swimming</div><div class="sched-item">🎨 Art & Crafts</div></div>
+        <div class="sched-time" data-i18n="sched_time">7:30 – 1:30</div>
+      </div>
+      <div class="sched-day">
+        <div class="sched-day-name" data-i18n="day_mon">Monday</div>
+        <div class="sched-day-items"><div class="sched-item">🥋 Martial Arts</div><div class="sched-item">📖 Storytelling</div></div>
+        <div class="sched-time" data-i18n="sched_time">7:30 – 1:30</div>
+      </div>
+      <div class="sched-day">
+        <div class="sched-day-name" data-i18n="day_tue">Tuesday</div>
+        <div class="sched-day-items"><div class="sched-item">🏊 Swimming</div><div class="sched-item">🔭 Explore</div></div>
+        <div class="sched-time" data-i18n="sched_time">7:30 – 1:30</div>
+      </div>
+      <div class="sched-day">
+        <div class="sched-day-name" data-i18n="day_wed">Wednesday</div>
+        <div class="sched-day-items"><div class="sched-item">🥊 MMA / Boxing</div><div class="sched-item">🎨 Art & Crafts</div></div>
+        <div class="sched-time" data-i18n="sched_time">7:30 – 1:30</div>
+      </div>
+      <div class="sched-day">
+        <div class="sched-day-name" data-i18n="day_thu">Thursday</div>
+        <div class="sched-day-items"><div class="sched-item">🏊 Swimming</div><div class="sched-item">💃 Ballet / Dance</div></div>
+        <div class="sched-time" data-i18n="sched_time">7:30 – 1:30</div>
+      </div>
+      <div class="sched-day fri">
+        <div class="sched-day-name" data-i18n="day_fri">Friday ★</div>
+        <div class="sched-day-items">
+          <div class="sched-item" data-i18n="sched_family">🎪 Family Day</div>
+          <div class="sched-item" data-i18n="sched_showcases">🏆 Showcases</div>
+        </div>
+        <div class="sched-time" data-i18n="sched_open">Open for families</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+<!-- REGISTER -->
+<section id="register">
+  <div class="reg-inner">
+    <div class="reg-pin">
+      <div class="reg-label fu" data-i18n="reg_label">Registration</div>
+      <h2 class="reg-h fu d1" data-i18n-html="reg_title">Reserve<br>Your Spot</h2>
+      <p class="reg-sub fu d2" data-i18n="reg_sub">Fill in the form and our team will call you within 24 hours with all the details and payment info.</p>
+      <div class="reg-note fu d3" data-i18n="reg_note">★ No payment required. Interest registration only.</div>
+      <div class="reg-contact fu d4">
+        <span data-i18n="reg_contact_pre">Prefer to register directly?</span>
+        <a href="https://wa.me/962799176917" target="_blank" rel="noopener" data-i18n="reg_contact_link"> WhatsApp us →</a>
+      </div>
+    </div>
+    <div class="reg-form fu d2">
+      <div id="formBody">
+        <div class="form-title" data-i18n="form_title">Child &amp; Parent Details</div>
+        <div class="form-row">
+          <div class="fg">
+            <label class="fl" for="pname" data-i18n="field_pname_label">Parent Name</label>
+            <input class="fi-in" type="text" id="pname" data-i18n-ph="field_pname_ph" placeholder="Your full name" autocomplete="name">
+          </div>
+          <div class="fg">
+            <label class="fl" for="cname" data-i18n="field_cname_label">Child Name</label>
+            <input class="fi-in" type="text" id="cname" data-i18n-ph="field_cname_ph" placeholder="Child's full name">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="fg">
+            <label class="fl" for="cage" data-i18n="field_cage_label">Child Age</label>
+            <input class="fi-in" type="number" id="cage" data-i18n-ph="field_cage_ph" placeholder="Age (4–14)" min="4" max="14" oninput="autoGroup(this.value)">
+            <div class="form-hint" id="ageHint"></div>
+          </div>
+          <div class="fg">
+            <label class="fl" for="phone" data-i18n="field_phone_label">WhatsApp Number</label>
+            <input class="fi-in" type="tel" id="phone" data-i18n-ph="field_phone_ph" placeholder="+962 7X XXX XXXX" autocomplete="tel">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="fg">
+            <label class="fl" for="email" data-i18n="field_email_label">Email Address</label>
+            <input class="fi-in" type="email" id="email" placeholder="your@email.com" autocomplete="email">
+          </div>
+          <div class="fg">
+            <label class="fl" for="school" data-i18n="field_school_label">School Name</label>
+            <input class="fi-in" type="text" id="school" data-i18n-ph="field_school_ph" placeholder="Child's school">
+          </div>
+        </div>
+        <div class="fg">
+          <label class="fl" for="group" data-i18n="field_group_label">Age Group</label>
+          <div class="sel-wrap">
+            <select class="fi-sel" id="group">
+              <option value="" disabled selected data-i18n-opt="group_placeholder">Select age group</option>
+              <option value="4-6"   data-i18n-opt="group_opt1">Little Stars — Ages 4–6</option>
+              <option value="7-10"  data-i18n-opt="group_opt2">Rising Stars — Ages 7–10</option>
+              <option value="11-14" data-i18n-opt="group_opt3">Future Stars — Ages 11–14</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg">
+          <label class="fl" for="busService" data-i18n="field_bus_label">Bus Service</label>
+          <div class="sel-wrap">
+            <select class="fi-sel" id="busService" onchange="toggleBusArea(this.value)">
+              <option value="" disabled selected data-i18n-opt="bus_placeholder">Do you need bus pickup?</option>
+              <option value="no"  data-i18n-opt="bus_no">No — I will drop off my child myself</option>
+              <option value="yes" data-i18n-opt="bus_yes">Yes — I need bus pickup</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg" id="busAreaField" style="display:none;margin-top:-4px">
+          <label class="fl" for="busArea" data-i18n="field_area_label">Pickup Area</label>
+          <div class="sel-wrap">
+            <select class="fi-sel" id="busArea">
+              <option value="" disabled selected data-i18n-opt="area_placeholder">Select your area</option>
+              <option>Abdoun / Shmaisani</option>
+              <option>Sweifieh</option>
+              <option>Khalda</option>
+              <option>Mecca Street / Gardens</option>
+              <option>7th Circle</option>
+              <option>8th Circle</option>
+              <option>Jubeiha / Housing Bank</option>
+              <option>Tlaa Al-Ali / Bader</option>
+              <option>Other area</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg">
+          <label class="fl" for="groupRef" data-i18n="field_groupref_label">Group Name <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.9em;color:var(--txt-lt)" data-i18n="field_groupref_optional">(Optional — 10% group discount)</span></label>
+          <input class="fi-in" type="text" id="groupRef" data-i18n-ph="field_groupref_ph" placeholder="e.g. Al-Rasheed School Group">
+          <div class="form-hint" data-i18n="field_groupref_hint">If you were referred by a group or school, enter the group name here.</div>
+        </div>
+        <button class="f-submit" onclick="handleSubmit()" data-i18n="submit_btn">★ Reserve My Spot</button>
+      </div>
+      <div class="form-ok" id="formOk">
+        <div class="ok-star"><svg viewBox="0 0 100 100" style="width:64px;height:64px;fill:var(--gold);filter:drop-shadow(0 4px 12px rgba(232,168,32,.4));"><use href="#s7"/></svg></div>
+        <div class="ok-h" data-i18n="ok_title">You're on the list! 🎉</div>
+        <p class="ok-p" data-i18n="ok_desc">We've received your registration. Our team will call or message you within 24 hours to confirm your spot and share payment details.</p>
+        <a href="https://wa.me/962799176917" class="ok-wa" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:white;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+          <span data-i18n="ok_wa">Message us on WhatsApp</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-top">
+    <div class="ft-left">
+      <div class="ft-star"><svg viewBox="0 0 100 100" style="width:15px;height:15px;fill:var(--gold);"><use href="#s7"/></svg></div>
+      <div>
+        <div class="ft-name">NAJ<span>O</span>OM</div>
+        <div class="ft-sub" data-i18n="ft_sub">Summer Experience · Dunes Club, Amman · Summer 2026</div>
+      </div>
+    </div>
+    <div class="ft-links">
+      <a href="#activities" class="ft-link" data-i18n="ft_activities">Activities</a>
+      <a href="#pricing"    class="ft-link" data-i18n="ft_pricing">Pricing</a>
+      <a href="#schedule"   class="ft-link" data-i18n="ft_schedule">Schedule</a>
+      <a href="#register"   class="ft-link" data-i18n="ft_register">Register</a>
+      <a href="schedule.html" class="ft-link" data-i18n="ft_full_sched">Full Schedule</a>
+      <a href="najoom-ops.html" class="ft-link" style="opacity:.22;font-size:.58rem">⚙ Ops</a>
+    </div>
+  </div>
+  <div class="ft-bottom">
+    <div class="ft-copy" data-i18n="ft_copy">© 2026 Najoom. All rights reserved.</div>
+    <div class="ft-contact">
+      <span data-i18n="ft_questions">Questions?</span>
+      <a href="https://wa.me/962799176917" target="_blank" rel="noopener" data-i18n="ft_wa"> WhatsApp us</a> &nbsp;·&nbsp;
+      <a href="https://instagram.com/najoom" target="_blank" rel="noopener" data-i18n="ft_ig">@najoom on Instagram</a>
+    </div>
+  </div>
+</footer>
+
+
+<script>
+/* ── TRANSLATIONS ── */
+const T = {
+  en: {
+    nav_activities:'Activities', nav_ages:'Age Groups', nav_pricing:'Pricing',
+    nav_schedule:'Schedule', nav_family:'Family Day', nav_full_sched:'Full Schedule', nav_btn:'★ Reserve a Spot',
+    strip_open_label:'Opening Day', strip_open_val:'<strong>June 21, 2026</strong>',
+    strip_loc_label:'Location', strip_loc_val:'Dunes Club, Amman',
+    strip_hours_label:'Hours', strip_hours_val:'Sun – Thu · 7:30 – 1:30',
+    strip_ages_label:'Ages', strip_ages_val:'4 – 14 Years',
+    hero_tag:'<span>★</span> Dunes Club, Amman &nbsp;·&nbsp; Summer 2026',
+    hero_h1:'A Summer<br>They <em>Will Remember</em>',
+    hero_btn1:'★ Reserve a Spot', hero_btn2:'See the Experience',
+    stat_tracks_l:'Activity Tracks', stat_groups_l:'Age Groups', stat_spots_l:'Spots Available',
+    act_art:'Art & Creativity', act_swim:'Swimming', act_martial:'Martial Arts',
+    act_story:'Storytelling', act_explore:'Explore & Discover',
+    ages_title:'Designed for Every Age',
+    ages_sub:'Three groups, each with its own program and coaches.',
+    age1_badge:'Little Stars', age1_range:'4 – 6', age1_title:'Little Stars',
+    age1_desc:'Creativity, movement, and imagination through play.',
+    age2_badge:'Rising Stars', age2_range:'7 – 10', age2_title:'Rising Stars',
+    age2_desc:'Skills, teamwork, sports, and real friendships.',
+    age3_badge:'Future Stars', age3_range:'11 – 14', age3_title:'Future Stars',
+    age3_desc:'Leadership, confidence, and real challenge.',
+    pricing_tag:'Pricing', pricing_title:'Simple, Transparent Pricing',
+    price_label:'Per Child · Per Month', price_title:'Full Summer Experience',
+    price_desc:'5 activity tracks · 3 age groups · Family Fridays · Professional coaches · Safe supervised environment',
+    price_unit:'JD / Month',
+    bus_type:'Optional Add-on', bus_title:'Bus Service',
+    bus_amount:'From 150 JD<span class="unit"> /month</span>',
+    bus_desc:'Price varies by area. Contact us to confirm your route rate.',
+    ext_type:'Optional Add-on', ext_title:'Extended Stay',
+    ext_amount:'7 JD<span class="unit"> /day</span>',
+    ext_desc:'Camp ends at 1:30 PM. Supervised afternoon activities until 4 PM.',
+    daily_type:'Drop-in', daily_title:'Daily Pass',
+    daily_amount:'35 JD<span class="unit"> /day</span>',
+    daily_desc:'Join for a single day. Full access to all activities and tracks.',
+    sib_type:'Special Offer', sib_title:'Siblings Discount',
+    sib_amount:'10% <span class="unit">OFF per child</span>',
+    sib_desc:'Register two or more brothers or sisters together. Discount applies to each child.',
+    grp_type:'Special Offer', grp_title:'Group Discount',
+    grp_amount:'10% <span class="unit">OFF per child</span>',
+    grp_desc:'Registering 5 or more children from the same group or school? Everyone saves.',
+    price_cta:'★ Reserve Your Spot',
+    price_note:'No payment now. Our team contacts you within 24 hours.',
+    hiw_tag:'How to Join', hiw_title:'Three Simple Steps',
+    step1_title:'Fill the Form', step1_desc:'Register your interest below. Takes less than 2 minutes. No payment needed now.',
+    step2_title:'We Call You', step2_desc:'Our team reaches out within 24 hours to confirm details, answer questions, and arrange payment.',
+    step3_title:'Your Child Joins', step3_desc:'Show up on June 21 ready for the summer. We handle everything from there.',
+    sched_tag:'Weekly Programme', sched_title:"Your Child's Week at Najoom",
+    sched_sub:'Sun – Thu program · Fri is Family Day',
+    day_sun:'Sunday', day_mon:'Monday', day_tue:'Tuesday',
+    day_wed:'Wednesday', day_thu:'Thursday', day_fri:'Friday ★',
+    sched_family:'🎪 Family Day', sched_showcases:'🏆 Showcases',
+    sched_open:'Open for families', sched_time:'7:30 – 1:30',
+    fri_badge_day:'FRI', fri_badge_sub:'Every Week',
+    fri_label:'Community Day',
+    fri_title:"The Week Doesn't<br>End on Thursday",
+    fri_desc:"Every Friday, families join the experience. Open activities, performances, and community events — all included with your child's registration.",
+    fri_item1:'Family open access to all activities',
+    fri_item2:"Children's talent showcases",
+    fri_item3:'Weekly achievement celebrations',
+    reg_label:'Registration', reg_title:'Reserve<br>Your Spot',
+    reg_sub:'Fill in the form and our team will call you within 24 hours with all the details and payment info.',
+    reg_note:'★ No payment required. Interest registration only.',
+    reg_contact_pre:'Prefer to register directly?',
+    reg_contact_link:' WhatsApp us →',
+    form_title:'Child & Parent Details',
+    field_pname_label:'Parent Name', field_pname_ph:'Your full name',
+    field_cname_label:'Child Name', field_cname_ph:"Child's full name",
+    field_cage_label:'Child Age', field_cage_ph:'Age (4–14)',
+    field_phone_label:'WhatsApp Number', field_phone_ph:'+962 7X XXX XXXX',
+    field_email_label:'Email Address',
+    field_school_label:'School Name', field_school_ph:"Child's school",
+    field_group_label:'Age Group',
+    group_placeholder:'Select age group',
+    group_opt1:'Little Stars — Ages 4–6',
+    group_opt2:'Rising Stars — Ages 7–10',
+    group_opt3:'Future Stars — Ages 11–14',
+    field_bus_label:'Bus Service',
+    bus_placeholder:'Do you need bus pickup?',
+    bus_no:'No — I will drop off my child myself',
+    bus_yes:'Yes — I need bus pickup',
+    field_area_label:'Pickup Area',
+    area_placeholder:'Select your area',
+    field_groupref_label:'Group Name', field_groupref_optional:'(Optional — 10% group discount)', field_groupref_ph:'e.g. Al-Rasheed School Group', field_groupref_hint:'If you were referred by a group or school, enter the group name here.',
+    submit_btn:'★ Reserve My Spot',
+    ok_title:"You're on the list! 🎉",
+    ok_desc:"We've received your registration. Our team will call or message you within 24 hours to confirm your spot and share payment details.",
+    ok_wa:'Message us on WhatsApp',
+    ft_sub:'Summer Experience · Dunes Club, Amman · Summer 2026',
+    ft_activities:'Activities', ft_pricing:'Pricing', ft_schedule:'Schedule', ft_register:'Register', ft_full_sched:'Full Schedule',
+    ft_questions:'Questions?', ft_wa:' WhatsApp us', ft_ig:'@najoom on Instagram',
+    ft_copy:'© 2026 Najoom. All rights reserved.',
+  },
+  ar: {
+    nav_activities:'الأنشطة', nav_ages:'الفئات العمرية', nav_pricing:'الأسعار',
+    nav_schedule:'الجدول', nav_family:'جمعة العائلة', nav_full_sched:'الجدول الكامل', nav_btn:'★ سجّل طفلك الآن',
+    strip_open_label:'يوم الافتتاح', strip_open_val:'<strong>٢١ يونيو ٢٠٢٦</strong>',
+    strip_loc_label:'الموقع', strip_loc_val:'ديونز كلوب، عمّان',
+    strip_hours_label:'أوقات الدوام', strip_hours_val:'الأحد – الخميس · ٧:٣٠ – ١:٣٠',
+    strip_ages_label:'الفئة العمرية', strip_ages_val:'من ٤ إلى ١٤ سنة',
+    hero_tag:'<span>★</span> ديونز كلوب، عمّان &nbsp;·&nbsp; صيف ٢٠٢٦',
+    hero_h1:'صيفٌ لن<br>ينساه <em>طفلك</em>',
+    hero_btn1:'★ سجّل طفلك الآن', hero_btn2:'تعرّف على التجربة',
+    stat_tracks_l:'مسار نشاط', stat_groups_l:'فئة عمرية', stat_spots_l:'مقعدًا فقط',
+    act_art:'الفن والإبداع', act_swim:'السباحة', act_martial:'فنون القتال',
+    act_story:'القصص والحكايات', act_explore:'الاستكشاف والعلوم',
+    ages_title:'لكل عمر برنامجه',
+    ages_sub:'ثلاث مجموعات، لكل منها مدربون خاصون وبرنامج مناسب لعمر طفلك.',
+    age1_badge:'النجوم الصغار', age1_range:'٤ – ٦', age1_title:'النجوم الصغار',
+    age1_desc:'فرح ولعب وإبداع في بيئة آمنة ومحبّة تناسب صغارك.',
+    age2_badge:'النجوم الصاعدة', age2_range:'٧ – ١٠', age2_title:'النجوم الصاعدة',
+    age2_desc:'رياضة ومهارات وصداقات حقيقية تبنيها كل يوم.',
+    age3_badge:'نجوم المستقبل', age3_range:'١١ – ١٤', age3_title:'نجوم المستقبل',
+    age3_desc:'قيادة وثقة وتحديات حقيقية تبني شخصية طفلك.',
+    pricing_tag:'الأسعار', pricing_title:'أسعار واضحة وبدون مفاجآت',
+    price_label:'لكل طفل · شهريًا', price_title:'تجربة الصيف الكاملة لطفلك',
+    price_desc:'٥ مسارات أنشطة · ٣ فئات عمرية · جمعة العائلة · مدربون محترفون · بيئة آمنة ومشرفة',
+    price_unit:'دينار / الشهر',
+    bus_type:'إضافة اختيارية', bus_title:'خدمة الباص',
+    bus_amount:'من ١٥٠ دينار<span class="unit"> / شهر</span>',
+    bus_desc:'السعر يختلف حسب المنطقة. تواصل معنا لتأكيد سعر منطقتك.',
+    ext_type:'إضافة اختيارية', ext_title:'الإقامة الممتدة',
+    ext_amount:'٧ دينار<span class="unit"> / يوم</span>',
+    ext_desc:'المخيم ينتهي الساعة ١:٣٠ ظ. طفلك تحت إشراف حتى الساعة ٤ م.',
+    daily_type:'ليوم واحد', daily_title:'اشتراك يومي',
+    daily_amount:'٣٥ دينار<span class="unit"> / يوم</span>',
+    daily_desc:'انضم معنا ليوم واحد بالوصول الكامل لجميع الأنشطة.',
+    sib_type:'عرض خاص', sib_title:'خصم الأشقاء',
+    sib_amount:'١٠٪ <span class="unit">خصم لكل طفل</span>',
+    sib_desc:'سجّل أخوين أو أكثر في نفس الوقت وكل طفل يحصل على خصم ١٠٪.',
+    grp_type:'عرض خاص', grp_title:'خصم المجموعة',
+    grp_amount:'١٠٪ <span class="unit">خصم لكل طفل</span>',
+    grp_desc:'هل تسجّل ٥ أطفال أو أكثر من نفس المجموعة أو المدرسة؟ الكل يوفّر.',
+    price_cta:'★ سجّل طفلك الآن',
+    price_note:'لا دفع مطلوب الآن — فريقنا يتواصل معك خلال ٢٤ ساعة.',
+    hiw_tag:'كيف تنضم', hiw_title:'ثلاث خطوات بس',
+    step1_title:'أكمل النموذج', step1_desc:'سجّل الآن — أقل من دقيقتين ولا حاجة للدفع.',
+    step2_title:'نتصل فيك', step2_desc:'فريقنا بيتصل فيك خلال ٢٤ ساعة يأكدلك التفاصيل ويجاوب على كل أسئلتك.',
+    step3_title:'طفلك ينضم', step3_desc:'تعال يوم ٢١ يونيو وطفلك جاهز للصيف — نحنا منتكفّل بالباقي.',
+    sched_tag:'البرنامج الأسبوعي', sched_title:'أسبوع طفلك في نجوم',
+    sched_sub:'برنامج يومي الأحد – الخميس · الجمعة يوم العائلة',
+    day_sun:'الأحد', day_mon:'الاثنين', day_tue:'الثلاثاء',
+    day_wed:'الأربعاء', day_thu:'الخميس', day_fri:'الجمعة ★',
+    sched_family:'🎪 يوم العائلة', sched_showcases:'🏆 عروض المواهب',
+    sched_open:'مفتوح للعائلات', sched_time:'٧:٣٠ ص – ١:٣٠ ظ',
+    fri_badge_day:'جمعة', fri_badge_sub:'كل أسبوع',
+    fri_label:'جمعة العائلة',
+    fri_title:'الأسبوع ما بينتهي<br>يوم الخميس',
+    fri_desc:'كل جمعة، العائلة كلها مرحّب فيها في التجربة. أنشطة مفتوحة وعروض وفعاليات عائلية — وكل هذا مشمول في تسجيل طفلك.',
+    fri_item1:'وصول العائلة لجميع أنشطة المخيم',
+    fri_item2:'عروض مواهب الأطفال أمام الأهل',
+    fri_item3:'احتفال أسبوعي بإنجازات الأطفال',
+    reg_label:'التسجيل', reg_title:'احجز<br>مقعد طفلك',
+    reg_sub:'أكمل النموذج وفريقنا بيتصل فيك خلال ٢٤ ساعة بكل التفاصيل وطريقة الدفع.',
+    reg_note:'★ لا دفع مطلوب الآن — تسجيل اهتمام فقط.',
+    reg_contact_pre:'تفضّل التسجيل مباشرة؟',
+    reg_contact_link:' راسلنا على واتساب ←',
+    form_title:'بيانات الطفل والوالد / الوالدة',
+    field_pname_label:'اسم الوالد / الوالدة', field_pname_ph:'اسمك الكامل',
+    field_cname_label:'اسم الطفل', field_cname_ph:'اسم الطفل كاملًا',
+    field_cage_label:'عمر الطفل', field_cage_ph:'العمر (٤–١٤)',
+    field_phone_label:'رقم الواتساب', field_phone_ph:'+962 7X XXX XXXX',
+    field_email_label:'البريد الإلكتروني',
+    field_school_label:'اسم المدرسة', field_school_ph:'مدرسة الطفل',
+    field_group_label:'الفئة العمرية',
+    group_placeholder:'اختر الفئة العمرية',
+    group_opt1:'النجوم الصغار — من ٤ إلى ٦ سنوات',
+    group_opt2:'النجوم الصاعدة — من ٧ إلى ١٠ سنوات',
+    group_opt3:'نجوم المستقبل — من ١١ إلى ١٤ سنة',
+    field_bus_label:'خدمة الباص',
+    bus_placeholder:'هل تحتاج خدمة الباص؟',
+    bus_no:'لا — سأوصّل طفلي بنفسي',
+    bus_yes:'نعم — أحتاج خدمة الباص',
+    field_area_label:'منطقة الاستقبال',
+    area_placeholder:'اختر منطقتك',
+    field_groupref_label:'اسم المجموعة', field_groupref_optional:'(اختياري — خصم ١٠٪ للمجموعات)', field_groupref_ph:'مثال: مجموعة مدرسة الرشيد', field_groupref_hint:'إذا جئت عن طريق مجموعة أو مدرسة، اكتب اسمها هنا.',
+    submit_btn:'★ سجّل طفلي الآن',
+    ok_title:'وصلنا طلبك! 🎉',
+    ok_desc:'شكرًا لتسجيلك. فريقنا رح يتصل فيك أو يراسلك خلال ٢٤ ساعة لتأكيد المقعد ومشاركة تفاصيل الدفع.',
+    ok_wa:'راسلنا على واتساب',
+    ft_sub:'تجربة صيف · ديونز كلوب، عمّان · صيف ٢٠٢٦',
+    ft_activities:'الأنشطة', ft_pricing:'الأسعار', ft_schedule:'الجدول', ft_register:'سجّل', ft_full_sched:'الجدول الكامل',
+    ft_questions:'عندك سؤال؟', ft_wa:' واتساب', ft_ig:'نجوم على انستغرام',
+    ft_copy:'© ٢٠٢٦ نجوم. جميع الحقوق محفوظة.',
+  }
+};
+
+/* ── LANGUAGE SWITCH ── */
+let currentLang = localStorage.getItem('najoom_lang') || 'en';
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('najoom_lang', lang);
+  const html = document.documentElement;
+  html.lang = lang;
+  html.dir  = lang === 'ar' ? 'rtl' : 'ltr';
+
+  const d = T[lang];
+
+  // text content
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.dataset.i18n;
+    if (d[k] !== undefined) el.textContent = d[k];
+  });
+
+  // innerHTML (elements with nested tags)
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const k = el.dataset.i18nHtml;
+    if (d[k] !== undefined) el.innerHTML = d[k];
+  });
+
+  // placeholders
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const k = el.dataset.i18nPh;
+    if (d[k] !== undefined) el.placeholder = d[k];
+  });
+
+  // select option text
+  document.querySelectorAll('[data-i18n-opt]').forEach(el => {
+    const k = el.dataset.i18nOpt;
+    if (d[k] !== undefined) el.textContent = d[k];
+  });
+
+  // lang toggle button label
+  document.getElementById('langToggle').textContent = lang === 'ar' ? 'English' : 'عربي';
+
+  // age hint arrow direction
+  const hint = document.getElementById('ageHint');
+  if (hint && hint.textContent) {
+    hint.textContent = hint.textContent.replace(/^[→←]\s/, (lang === 'ar' ? '← ' : '→ '));
+  }
+}
+
+function toggleLang() {
+  setLang(currentLang === 'en' ? 'ar' : 'en');
+}
+
+// apply saved language on load
+if (currentLang === 'ar') setLang('ar');
+
+/* ── NAV SCROLL ── */
+const nav    = document.getElementById('nav');
+const fRes   = document.getElementById('fReserve');
+const heroEl = document.getElementById('hero');
+
+window.addEventListener('scroll', () => {
+  const sy = window.scrollY;
+  nav.classList.toggle('solid', sy > 50);
+  fRes.classList.toggle('show', sy > heroEl.offsetHeight * 0.65);
+}, { passive: true });
+
+/* ── INTERSECTION OBSERVER ── */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
+}, { threshold: 0.1, rootMargin: '0px 0px -28px 0px' });
+document.querySelectorAll('.fu, .fi').forEach(el => io.observe(el));
+
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => { document.querySelectorAll('#hero .fu, #hero .fi').forEach(el => el.classList.add('on')); }, 200);
+});
+
+/* ── AGE AUTO-SELECT ── */
+function autoGroup(age) {
+  const hint = document.getElementById('ageHint');
+  const sel  = document.getElementById('group');
+  const n    = parseInt(age);
+  const ar   = currentLang === 'ar';
+  const arrow = ar ? '← ' : '→ ';
+  const d = T[currentLang];
+  if      (n >= 4  && n <= 6)  { sel.value = '4-6';   hint.textContent = arrow + d.age1_title; hint.style.color = 'var(--gold-dk)'; }
+  else if (n >= 7  && n <= 10) { sel.value = '7-10';  hint.textContent = arrow + d.age2_title; hint.style.color = 'var(--gold-dk)'; }
+  else if (n >= 11 && n <= 14) { sel.value = '11-14'; hint.textContent = arrow + d.age3_title; hint.style.color = 'var(--gold-dk)'; }
+  else { hint.textContent = n > 14 ? (ar ? 'الحد الأقصى للعمر هو ١٤' : 'Age limit is 14') : ''; hint.style.color = 'var(--red)'; }
+}
+
+/* ── FORM SUBMIT ── */
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzseRLZUbY40BlelkAJEuDZg6g_IvSUhm3eyAkU83m4rw4j4B7NF4PJqQdBTV7dnUo/exec';
+
+// ── Firebase config (must match the one in najoom-ops.html) ──────────────────
+const FB_CONFIG = {
+  // apiKey:            "PASTE_HERE",
+  // authDomain:        "PASTE_HERE",
+  // databaseURL:       "PASTE_HERE",
+  // projectId:         "PASTE_HERE",
+  // storageBucket:     "PASTE_HERE",
+  // messagingSenderId: "PASTE_HERE",
+  // appId:             "PASTE_HERE",
+};
+const FB_PATH = 'najoom';
+
+function toggleBusArea(val) {
+  const f = document.getElementById('busAreaField');
+  f.style.display = val === 'yes' ? 'block' : 'none';
+  if (val !== 'yes') document.getElementById('busArea').value = '';
+}
+
+async function handleSubmit() {
+  const ids = ['pname','cname','cage','phone','email','school','group','busService'];
+  let ok = true;
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el || !el.value.trim()) {
+      ok = false;
+      if (el) { el.style.borderColor = 'var(--red)'; el.style.background = 'var(--red-lt)'; setTimeout(() => { el.style.borderColor = ''; el.style.background = ''; }, 2000); }
+    }
+  });
+  const needsBus = document.getElementById('busService').value === 'yes';
+  if (needsBus) {
+    const areaEl = document.getElementById('busArea');
+    if (!areaEl.value) {
+      ok = false;
+      areaEl.style.borderColor = 'var(--red)'; areaEl.style.background = 'var(--red-lt)';
+      setTimeout(() => { areaEl.style.borderColor = ''; areaEl.style.background = ''; }, 2000);
+    }
+  }
+  if (!ok) return;
+
+  const btn = document.querySelector('.f-submit');
+  btn.textContent = currentLang === 'ar' ? '...' : 'Sending…';
+  btn.disabled = true;
+
+  const payload = {
+    pname:      document.getElementById('pname').value.trim(),
+    cname:      document.getElementById('cname').value.trim(),
+    cage:       document.getElementById('cage').value.trim(),
+    phone:      document.getElementById('phone').value.trim(),
+    email:      document.getElementById('email').value.trim(),
+    school:     document.getElementById('school').value.trim(),
+    group:      document.getElementById('group').value,
+    busService: document.getElementById('busService').value,
+    busArea:    needsBus ? document.getElementById('busArea').value : '',
+    groupRef:   document.getElementById('groupRef').value.trim()
+  };
+
+  try { new Image().src = SCRIPT_URL + '?' + new URLSearchParams(payload).toString(); } catch(_) {}
+
+  // Save registration
+  const reg = {
+    id:       Date.now().toString(36) + Math.random().toString(36).slice(2),
+    ts:       Date.now(),
+    pname:    payload.pname,
+    cname:    payload.cname,
+    cage:     parseInt(payload.cage) || 0,
+    group:    payload.group,
+    phone:    payload.phone,
+    email:    payload.email,
+    school:   payload.school,
+    needsBus: needsBus,
+    busArea:  needsBus ? payload.busArea : null,
+    groupRef: payload.groupRef || null,
+    status:   'new'
+  };
+
+  // Always save locally as backup
+  const saved = JSON.parse(localStorage.getItem('njm_registrations') || '[]');
+  saved.push(reg);
+  localStorage.setItem('njm_registrations', JSON.stringify(saved));
+
+  // Write to Firebase so Ops dashboard sees it live
+  const hasFb = FB_CONFIG.apiKey && FB_CONFIG.databaseURL;
+  if (hasFb) {
+    try {
+      const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(FB_CONFIG);
+      const db  = firebase.database(app);
+      db.ref(`${FB_PATH}/regs`).transaction(current => {
+        const arr = current ? JSON.parse(current) : [];
+        arr.push(reg);
+        return JSON.stringify(arr);
+      });
+    } catch(e) { console.warn('Firebase write failed, saved locally only:', e); }
+  }
+
+  document.getElementById('formBody').style.display = 'none';
+  document.getElementById('formOk').classList.add('show');
+}
+</script>
+</body>
+</html>

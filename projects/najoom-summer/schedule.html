@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activity Schedule — Najoom Summer Experience</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --red:   #C02A2A; --red-dk:#8B1E1E; --red-lt:#F5E8E8;
+      --gold:  #E8A820; --gold-dk:#C48A10; --gold-lt:#FDF3D8;
+      --cream: #FFFBF7; --cream2:#FFF5EC; --cream3:#F5EFE6;
+      --txt:   #1A1212; --mid:   #4A3535; --muted: #8A6A6A;
+      --line:  rgba(26,18,18,.1);
+      --r:     14px;
+      --sans:  'Poppins', sans-serif;
+      --serif: 'Cormorant Garamond', Georgia, serif;
+
+      /* Activity colours */
+      --swim:    #1B7FBF; --swim-bg:  rgba(27,127,191,.1);
+      --art:     #9B4DCA; --art-bg:   rgba(155,77,202,.1);
+      --martial: #E06820; --martial-bg:rgba(224,104,32,.1);
+      --mma:     #B82020; --mma-bg:   rgba(184,32,32,.1);
+      --ballet:  #CC3D7A; --ballet-bg:rgba(204,61,122,.1);
+      --story:   #1BA89A; --story-bg: rgba(27,168,154,.1);
+      --explore: #3D9E20; --explore-bg:rgba(61,158,32,.1);
+      --sensory: #7AAB2A; --sensory-bg:rgba(122,171,42,.1);
+      --design:  #9B4DCA; --design-bg: rgba(155,77,202,.1);
+      --shared:  #B07808; --shared-bg: rgba(176,120,8,.1);
+    }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html { scroll-behavior:smooth; }
+    body { font-family:var(--sans); background:var(--cream); color:var(--txt); overflow-x:hidden; }
+
+    /* ── NAV ── */
+    nav {
+      position:fixed; top:0; left:0; width:100%; z-index:100;
+      background:rgba(255,251,247,.97); backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--line);
+      padding:14px 5%; display:flex; align-items:center; justify-content:space-between;
+    }
+    .nav-logo { display:flex; align-items:center; gap:9px; text-decoration:none; }
+    .nav-star { width:32px; height:32px; background:var(--red-dk); border-radius:50%; display:flex; align-items:center; justify-content:center; transition:transform .3s; }
+    .nav-star:hover { transform:rotate(20deg); }
+    .nav-name { font-size:1.05rem; font-weight:800; color:var(--txt); letter-spacing:.04em; }
+    .nav-name span { color:var(--gold); }
+    .nav-back { font-size:.66rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); background:var(--cream3); border:1px solid var(--line); padding:9px 18px; border-radius:999px; text-decoration:none; transition:all .2s; }
+    .nav-back:hover { color:var(--red); border-color:var(--red-lt); }
+
+    /* ── HERO ── */
+    .hero {
+      background:linear-gradient(155deg, #1A0808 0%, #2E1010 50%, #1A1810 100%);
+      padding:120px 5% 80px; text-align:center; position:relative; overflow:hidden;
+    }
+    .hero::before { content:''; position:absolute; top:-100px; left:-100px; width:400px; height:400px; background:radial-gradient(circle, rgba(232,168,32,.12) 0%, transparent 70%); }
+    .hero::after  { content:''; position:absolute; bottom:-80px; right:-80px; width:300px; height:300px; background:radial-gradient(circle, rgba(192,42,42,.12) 0%, transparent 70%); }
+    .hero-eyebrow { font-size:.62rem; font-weight:700; letter-spacing:.25em; text-transform:uppercase; color:var(--gold); opacity:.8; margin-bottom:18px; }
+    .hero-h1 { font-family:var(--serif); font-size:clamp(2.4rem, 6vw, 4.2rem); font-weight:600; color:#fff; line-height:1.1; margin-bottom:16px; position:relative; z-index:1; }
+    .hero-h1 span { color:var(--gold); font-style:italic; }
+    .hero-sub { font-size:clamp(.85rem, 1.6vw, 1rem); color:rgba(255,255,255,.55); margin-bottom:36px; font-weight:400; }
+    .hero-pills { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
+    .h-pill { display:inline-flex; align-items:center; gap:7px; font-size:.7rem; font-weight:700; padding:8px 18px; border-radius:999px; }
+    .h-pill-red   { background:rgba(192,42,42,.2);  color:#FF9090; border:1px solid rgba(192,42,42,.35); }
+    .h-pill-gold  { background:rgba(232,168,32,.2); color:var(--gold); border:1px solid rgba(232,168,32,.35); }
+    .h-pill-white { background:rgba(255,255,255,.1);color:rgba(255,255,255,.75); border:1px solid rgba(255,255,255,.2); }
+
+    /* ── CONTAINER ── */
+    .container { max-width:1100px; margin:0 auto; padding:0 5%; }
+
+    /* ── SECTION HEADERS ── */
+    .section-label { font-size:.58rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
+    .section-title { font-family:var(--serif); font-size:clamp(1.6rem, 3.5vw, 2.4rem); font-weight:600; color:var(--txt); line-height:1.2; }
+
+    /* ── WEEK THEMES ── */
+    .weeks-section { padding:72px 0 40px; }
+    .weeks-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr)); gap:16px; margin-top:32px; }
+    .week-card {
+      background:#fff; border:1px solid var(--line); border-radius:var(--r);
+      padding:22px 20px; position:relative; overflow:hidden;
+      transition:transform .2s, box-shadow .2s;
+    }
+    .week-card:hover { transform:translateY(-3px); box-shadow:0 12px 32px rgba(26,18,18,.08); }
+    .week-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+    .week-card.w1::before { background:linear-gradient(90deg, var(--gold), #FFD070); }
+    .week-card.w2::before { background:linear-gradient(90deg, var(--explore), #8FD66A); }
+    .week-card.w3::before { background:linear-gradient(90deg, var(--art), #D09BF5); }
+    .week-card.w4::before { background:linear-gradient(90deg, var(--red), #E07070); }
+    .wc-num { font-size:.54rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+    .wc-ar  { font-family:'Cairo', sans-serif; font-size:1.25rem; font-weight:900; color:var(--txt); margin-bottom:4px; }
+    .wc-en  { font-size:.72rem; font-weight:600; color:var(--mid); margin-bottom:10px; }
+    .wc-theme { display:inline-flex; align-items:center; gap:5px; font-size:.6rem; font-weight:700; padding:4px 10px; border-radius:999px; background:var(--cream3); color:var(--muted); border:1px solid var(--line); }
+    .wc-dates { font-size:.6rem; color:var(--muted); margin-top:10px; }
+
+    /* ── LEGEND ── */
+    .legend-section { padding:0 0 40px; }
+    .legend-grid { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+    .leg { display:inline-flex; align-items:center; gap:6px; font-size:.62rem; font-weight:600; padding:5px 12px; border-radius:999px; }
+
+    /* ── DAY SCHEDULE ── */
+    .schedule-section { padding:40px 0 80px; }
+    .day-card { background:#fff; border:1px solid var(--line); border-radius:var(--r); overflow:hidden; margin-bottom:24px; box-shadow:0 2px 16px rgba(26,18,18,.04); }
+    .day-header {
+      padding:18px 24px; display:flex; align-items:center; justify-content:space-between; gap:12px;
+      border-bottom:1px solid var(--line);
+    }
+    .dh-left { display:flex; align-items:center; gap:12px; }
+    .dh-day  { font-size:1.05rem; font-weight:800; }
+    .dh-theme{ font-size:.66rem; font-weight:600; color:var(--muted); }
+    .dh-badge{ font-size:.58rem; font-weight:700; padding:4px 10px; border-radius:999px; background:rgba(176,120,8,.1); color:var(--shared); border:1px solid rgba(176,120,8,.2); flex-shrink:0; }
+
+    .table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    table { width:100%; border-collapse:collapse; min-width:580px; }
+    thead th {
+      padding:11px 14px; font-size:.6rem; font-weight:800; letter-spacing:.06em;
+      text-transform:uppercase; text-align:center; border-bottom:2px solid var(--line);
+      background:var(--cream); white-space:nowrap;
+    }
+    thead th:first-child { text-align:left; width:105px; color:var(--muted); }
+    thead th.th-l { color:var(--gold); }
+    thead th.th-r { color:var(--red); }
+    thead th.th-f { color:#1B6EAA; }
+    tbody tr { border-bottom:1px solid rgba(26,18,18,.05); }
+    tbody tr:last-child { border-bottom:none; }
+    td.time { padding:9px 14px; font-size:.62rem; font-weight:700; color:var(--muted); white-space:nowrap; background:var(--cream); border-right:2px solid var(--line); }
+    td.act  { padding:7px 10px; text-align:center; vertical-align:middle; }
+    td.shared { padding:9px 14px; text-align:center; }
+    td.shared .a { display:inline-flex; align-items:center; gap:7px; font-size:.72rem; font-weight:700; padding:7px 18px; border-radius:999px; }
+
+    /* Activity chips */
+    .a { display:inline-flex; flex-direction:column; align-items:center; gap:2px; width:100%; padding:6px 8px; border-radius:10px; font-size:.65rem; font-weight:600; line-height:1.3; }
+    .a em { font-size:.9rem; font-style:normal; }
+
+    .a-swim    { background:var(--swim-bg);    color:var(--swim);    }
+    .a-art     { background:var(--art-bg);     color:var(--art);     }
+    .a-martial { background:var(--martial-bg); color:var(--martial); }
+    .a-mma     { background:var(--mma-bg);     color:var(--mma);     }
+    .a-ballet  { background:var(--ballet-bg);  color:var(--ballet);  }
+    .a-story   { background:var(--story-bg);   color:var(--story);   }
+    .a-explore { background:var(--explore-bg); color:var(--explore); }
+    .a-sensory { background:var(--sensory-bg); color:var(--sensory); }
+    .a-design  { background:var(--design-bg);  color:var(--design);  }
+    .a-shared  { background:var(--shared-bg);  color:var(--shared);  border:1px solid rgba(176,120,8,.2); }
+
+    /* ── CTA ── */
+    .cta-section {
+      background:linear-gradient(135deg, #1A0808 0%, #2E1010 100%);
+      padding:72px 5%; text-align:center;
+    }
+    .cta-title { font-family:var(--serif); font-size:clamp(1.8rem, 4vw, 2.8rem); color:#fff; font-weight:600; margin-bottom:12px; }
+    .cta-title span { color:var(--gold); font-style:italic; }
+    .cta-sub { font-size:.85rem; color:rgba(255,255,255,.55); margin-bottom:32px; }
+    .btn-gold { display:inline-flex; align-items:center; gap:8px; font-family:var(--sans); font-size:.75rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:16px 36px; border-radius:999px; background:var(--gold); color:#fff; text-decoration:none; box-shadow:0 6px 24px rgba(232,168,32,.35); transition:all .25s; }
+    .btn-gold:hover { background:var(--gold-dk); transform:translateY(-2px); }
+
+    /* ── FOOTER ── */
+    footer { padding:28px 5%; text-align:center; font-size:.65rem; color:var(--muted); border-top:1px solid var(--line); }
+    footer a { color:var(--gold); }
+
+    @media (max-width:640px) {
+      .day-header { flex-direction:column; align-items:flex-start; }
+      .weeks-grid { grid-template-columns:1fr 1fr; }
+    }
+    @media (max-width:420px) {
+      .weeks-grid { grid-template-columns:1fr; }
+      .hero { padding:100px 5% 60px; }
+    }
+  </style>
+</head>
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="s7" viewBox="0 0 100 100">
+    <polygon points="50,0 59.5,30.2 89.1,18.8 71.5,45.1 98.8,61.1 67.2,63.7 71.7,95.1 50,72 28.3,95.1 32.8,63.7 1.2,61.1 28.5,45.1 10.9,18.8 40.5,30.2"/>
+  </symbol>
+</svg>
+
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">
+    <div class="nav-star">
+      <svg viewBox="0 0 100 100" style="width:17px;height:17px;fill:var(--gold);"><use href="#s7"/></svg>
+    </div>
+    <span class="nav-name">NAJ<span>O</span>OM</span>
+  </a>
+  <a class="nav-back" href="index.html">← Back to Home</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">Najoom Summer Experience 2026</div>
+  <h1 class="hero-h1">Activity <span>Schedule</span></h1>
+  <p class="hero-sub">Dunes Club, Amman &nbsp;·&nbsp; June 21 – July 9, 2026 &nbsp;·&nbsp; Sunday – Thursday</p>
+  <div class="hero-pills">
+    <div class="h-pill h-pill-gold">⏰ 7:30 AM – 1:30 PM</div>
+    <div class="h-pill h-pill-red">👶 Ages 4 – 14</div>
+    <div class="h-pill h-pill-white">4 Weeks · 3 Age Groups</div>
+  </div>
+</section>
+
+<div class="container">
+
+  <!-- WEEK THEMES -->
+  <section class="weeks-section">
+    <div class="section-label">The Four Weeks</div>
+    <h2 class="section-title">Every week has its own story</h2>
+    <div class="weeks-grid">
+      <div class="week-card w1">
+        <div class="wc-num">Week 01 · Jun 14–18</div>
+        <div class="wc-ar">أنا نجم!</div>
+        <div class="wc-en">I'm a Star!</div>
+        <div class="wc-theme">✨ Introductions & Launch</div>
+      </div>
+      <div class="week-card w2">
+        <div class="wc-num">Week 02 · Jun 21–25</div>
+        <div class="wc-ar">أتحدى نفسي!</div>
+        <div class="wc-en">I Challenge Myself!</div>
+        <div class="wc-theme">💪 Adventure & Challenge</div>
+      </div>
+      <div class="week-card w3">
+        <div class="wc-num">Week 03 · Jun 28–Jul 2</div>
+        <div class="wc-ar">أبدع وأبتكر!</div>
+        <div class="wc-en">I Create & Innovate!</div>
+        <div class="wc-theme">🎨 Creativity & Arts</div>
+      </div>
+      <div class="week-card w4">
+        <div class="wc-num">Week 04 · Jul 5–9</div>
+        <div class="wc-ar">أنا نجم المستقبل!</div>
+        <div class="wc-en">Star of the Future!</div>
+        <div class="wc-theme">🏆 Leadership & Grand Finale</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEGEND -->
+  <section class="legend-section">
+    <div class="section-label">Activity Key</div>
+    <div class="legend-grid">
+      <span class="leg" style="background:var(--swim-bg);color:var(--swim)">🏊 Swimming</span>
+      <span class="leg" style="background:var(--art-bg);color:var(--art)">🎨 Art & Crafts</span>
+      <span class="leg" style="background:var(--martial-bg);color:var(--martial)">🥋 Martial Arts</span>
+      <span class="leg" style="background:var(--mma-bg);color:var(--mma)">🥊 MMA / Boxing</span>
+      <span class="leg" style="background:var(--ballet-bg);color:var(--ballet)">💃 Ballet / Dance</span>
+      <span class="leg" style="background:var(--story-bg);color:var(--story)">📖 Storytelling</span>
+      <span class="leg" style="background:var(--explore-bg);color:var(--explore)">🔭 Explore & Science</span>
+      <span class="leg" style="background:var(--sensory-bg);color:var(--sensory)">🌿 Sensory Play</span>
+      <span class="leg" style="background:var(--design-bg);color:var(--design)">✏️ Design / Graffiti</span>
+      <span class="leg" style="background:var(--shared-bg);color:var(--shared);border:1px solid rgba(176,120,8,.2)">⭐ All Groups Together</span>
+    </div>
+  </section>
+
+  <!-- SCHEDULE -->
+  <section class="schedule-section">
+    <div class="section-label">Weekly Schedule</div>
+    <h2 class="section-title" style="margin-bottom:8px">Same schedule, every week</h2>
+    <p style="font-size:.8rem;color:var(--muted);margin-bottom:32px">The daily programme repeats each week — the week themes add special events &amp; growing challenges on top.</p>
+
+    <!-- GROUP HEADER LEGEND -->
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:7px;font-size:.68rem;font-weight:700;color:var(--gold)">🌟 Little Stars <span style="font-weight:400;color:var(--muted)">Ages 4–6</span></div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:.68rem;font-weight:700;color:var(--red)">⭐ Rising Stars <span style="font-weight:400;color:var(--muted)">Ages 7–10</span></div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:.68rem;font-weight:700;color:#1B6EAA">🏆 Future Stars <span style="font-weight:400;color:var(--muted)">Ages 11–14</span></div>
+    </div>
+
+    <!-- SUNDAY -->
+    <div class="day-card">
+      <div class="day-header">
+        <div class="dh-left">
+          <div>
+            <div class="dh-day">Sunday</div>
+            <div class="dh-theme">Swimming + Art &amp; Crafts</div>
+          </div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Time</th>
+            <th class="th-l">🌟 Little Stars</th>
+            <th class="th-r">⭐ Rising Stars</th>
+            <th class="th-f">🏆 Future Stars</th>
+          </tr></thead>
+          <tbody>
+            <tr><td class="time">7:30 – 8:00</td><td class="shared" colspan="3"><div class="a a-shared"><em>⭐</em>Morning Assembly — All Groups</div></td></tr>
+            <tr>
+              <td class="time">8:00 – 9:00</td>
+              <td class="act"><div class="a a-art"><em>🎨</em>Art &amp; Crafts</div></td>
+              <td class="act"><div class="a a-story"><em>📖</em>Storytelling</div></td>
+              <td class="act"><div class="a a-explore"><em>🔭</em>Explore &amp; Discover</div></td>
+            </tr>
+            <tr><td class="time">9:00 – 9:15</td><td class="shared" colspan="3"><div class="a a-shared"><em>🍊</em>Snack Break — All Groups</div></td></tr>
+            <tr>
+              <td class="time">9:15 – 10:15</td>
+              <td class="act"><div class="a a-swim"><em>🏊</em>Pool A</div></td>
+              <td class="act"><div class="a a-art"><em>🎨</em>Art &amp; Crafts</div></td>
+              <td class="act"><div class="a a-swim"><em>🏊</em>Pool B</div></td>
+            </tr>
+            <tr>
+              <td class="time">10:15 – 11:15</td>
+              <td class="act"><div class="a a-ballet"><em>💃</em>Ballet / Dance</div></td>
+              <td class="act"><div class="a a-swim"><em>🏊</em>Pool A</div></td>
+              <td class="act"><div class="a a-explore"><em>🔭</em>Explore</div></td>
+            </tr>
+            <tr>
+              <td class="time">11:15 – 12:00</td>
+              <td class="act"><div class="a a-story"><em>📖</em>Storytelling</div></td>
+              <td class="act"><div class="a a-martial"><em>🥋</em>Martial Arts</div></td>
+              <td class="act"><div class="a a-art"><em>🎨</em>Art &amp; Design</div></td>
+            </tr>
+            <tr><td class="time">12:00 – 12:30</td><td class="shared" colspan="3"><div class="a a-shared"><em>🍽️</em>Lunch — All Groups</div></td></tr>
+            <tr>
+              <td class="time">12:30 – 1:15</td>
+              <td class="act"><div class="a a-art"><em>🎨</em>Free Art</div></td>
+              <td class="act"><div class="a a-explore"><em>🔭</em>Discovery Lab</div></td>
+              <td class="act"><div class="a a-mma"><em>🥊</em>MMA Intro Drills</div></td>
+            </tr>
+            <tr><td class="time">1:15 – 1:30</td><td class="shared" colspan="3"><div class="a a-shared"><em>✅</em>Wrap-up &amp; Dismissal</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MONDAY -->
+    <div class="day-card">
+      <div class="day-header">
+        <div class="dh-left">
+          <div>
+            <div class="dh-day">Monday</div>
+            <div class="dh-theme">Martial Arts + Storytelling</div>
+          </div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Time</th>
+            <th class="th-l">🌟 Little Stars</th>
+            <th class="th-r">⭐ Rising Stars</th>
+            <th class="th-f">🏆 Future Stars</th>
+          </tr></thead>
+          <tbody>
+            <tr><td class="time">7:30 – 8:00</td><td class="shared" colspan="3"><div class="a a-shared"><em>⭐</em>Morning Assembly — All Groups</div></td></tr>
+            <tr>
+              <td class="time">8:00 – 9:00</td>
+              <td class="act"><div class="a a-ballet"><em>💃</em>Ballet / Dance</div></td>
+              <td class="act"><div class="a a-martial"><em>🥋</em>Martial Arts</div></td>
+              <td class="act"><div class="a a-mma"><em>🥊</em>MMA / Boxing</div></td>
+            </tr>
+            <tr><td class="time">9:00 – 9:15</td><td class="shared" colspan="3"><div class="a a-shared"><em>🍊</em>Snack Break — All Groups</div></td></tr>
+            <tr>
+              <td class="time">9:15 – 10:15</td>
+              <td class="act"><div class="a a-story"><em>📖</em>Storytelling</div></td>
+              <td class="act"><div class="a a-story"><em>📖</em>Storytelling</div></td>
+              <td class="act"><div class="a a-explore"><em>🔭</em>Explore</div></td>
+            </tr>
+            <tr>
+              <td class="time">10:15 – 11:15</td>
+              <td class="act"><div class="a a-art"><em>🎨</em>Art &amp; Crafts</div></td>
+              <td class="act"><div class="a a-explore"><em>🔭</em>Discovery</div></td>
+              <td class="act"><div class="a a-story"><em>✍️</em>Creative Writing</div></td>
+            </tr>
+            <tr>
+              <td class="time">11:15 – 12:00</td>
+              <td class="act"><div class="a a-sensory"><em>🌿</em>Sensory Play</div></td>
+              <td class="act"><div class="a a-martial"><em>🥋</em>Martial Arts ×2</div></td>
+              <td class="act"><div class="a a-mma"><em>🥊</em>MMA Drills ×2</div></td>
+            </tr>
+            <tr><td class="time">12:00 – 12:30</td><td class="shared" colspan="3"><div class="a a-shared"><em>🍽️</em>Lunch — All Groups</div></td></tr>
+            <tr>
+              <td class="time">12:30 – 1:15</td>
+              <td class="act"><div class="a a-story"><em>🎭</em>Story Drama</div></td>
+              <td class="act"><div class="a a-art"><em>🎨</em>Art &amp; Crafts</div></td>
+              <td class="act"><div class="a a-design"><em>✏️</em>Graffiti / Design</div></td>
+            </tr>
+            <tr><td class="time">1:15 – 1:30</td><td class="shared" colspan="3"><div class="a a-shared"><em>✅</em>Wrap-up &amp; Dismissal</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TUESDAY -->
+    <div class="day-card">
+      <div class="day-header">
+        <div class="dh-left">
+          <div>
+            <div class="dh-day">Tuesday</div>
+            <div class="dh-theme">Swimming + Explore &amp; Science</div>
+          </div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Time</th>
+            <th class="th-l">🌟 Little Stars</th>
+            <th class="th-r">⭐ Rising Stars</th>
+            <th class="th-f">🏆 Future Stars</th>
+          </tr></thead>
+          <tbody>
+            <tr><td class="time">7:30 – 8:00</td><td class="shared" colspan="3"><div class="a a-shared"><em>⭐</em>Morning Assembly — All Groups</div></td></tr>
+            <tr>
+              <td class="time">8:00 – 9:00</td>
+              <td class="act"><div class="a a-explore"><em>🔭</em>Explore &amp; Play</div></td>
+              <td class="act"><div class="a a-explore"><em>🔭</em>Discovery Lab</div></td>
+              <td class="act"><div class="a a-martial"><em>🥋</em>Martial Arts</div></td>
+            </tr>
+            <tr><td class="time">9:00 – 9:15</td><td class="shared" colspan="3"><div class="a a-shared"><em>🍊</em>Snack Break — All Groups</div></td></tr>
+            <tr>
+              <td class="time">9:15 – 10:15</td>
+              <td class="act"><div class="a a-swim"><em>🏊</em>Pool A</div></td>
+              <td class="act"><div class="a a-art"><em>🎨</em>Art &amp; Crafts</div></td>
+              <td class="act"><div class="a a-swim"><em>🏊</em>Pool B</div></td>
+            </tr>
+            <tr>
+              <td class="time">10:15 – 11:15</td>
+              <td class="act"><div class="a a-art"><em>🎨</em>Art &amp; Crafts</div></td>
+              <td class="act"><div class="a a-swim"><em>🏊</em>Pool A</div></td>
+              <td class="act"><div class="a a-explore"><em>🔭</em>Explore</div></td>
+            </tr>
+            <tr>
+              <td class="time">11:15 – 12:00</td>
+              <td class="act"><div class="a a-ballet"><em>💃</em>Ballet / Dance</div></td>
+              <td class="act"><div class="a a-martial"><em>🥋</em>Martial Arts</div></td>
+              <td class="act"><div class="a a-design"><em>🎨</em>Design Challenge</div></td>
+            </tr>
+            <tr><td class="time">12:00 – 12:30</td><td class="shared" colspan="3"><div class="a a-shared"><em>🍽️</em>Lunch — All Groups</div></td></tr>
+            <tr>
+              <td class="time">12:30 – 1:15</td>
+              <td class="act"><div class="a a-story"><em>📖</em>Storytelling</div></td>
+              <td class="act"><div class="a a-explore"><em>🔭</em>Exploration Lab</div></td>
+              <td class="act"><div class="a a-mma"><em>🥊</em>MMA Drills</div></td>
+            </tr>
+            <tr><td class="time">1:15 – 1:30</td><td class="shared" colspan="3"><div class="a a-shared"><em>✅</em>Wrap-up &amp; Dismissal</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- WEDNESDAY -->
+    <div class="day-card">
+      <div class="day-header">
+        <div class="dh-left">
+          <div>
+            <div class="dh-day">Wednesday</div>
+            <div class="dh-theme">MMA + Art &amp; Crafts</div>
+          </div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Time</th>
+            <th class="th-l">🌟 Little Stars</th>
+            <th class="th-r">⭐ Rising Stars</th>
+            <th class="th-f">🏆 Future Stars</th>
+          </tr></thead>
+          <tbody>
+            <tr><td class="time">7:30 – 8:00</td><td class="shared" colspan="3"><div class="a a-shared"><em>⭐</em>Morning Assembly — All Groups</div></td></tr>
+            <tr>
+              <td class="time">8:00 – 9:00</td>
+              <td class="act"><div class="a a-art"><em>🎨</em>Art &amp; Crafts</div></td>
+              <td class="act"><div class="a a-art"><em>🎨</em>Art &amp; Crafts</div></td>
+              <td class="act"><div class="a a-mma"><em>🥊</em>MMA / Boxing</div></td>
+            </tr>
+            <tr><td class="time">9:00 – 9:15</td><td class="shared" colspan="3"><div class="a a-shared"><em>🍊</em>Snack Break — All Groups</div></td></tr>
+            <tr>
+              <td class="time">9:15 – 10:15</td>
+              <td class="act"><div class="a a-ballet"><em>💃</em>Ballet / Dance</div></td>
+              <td class="act"><div class="a a-martial"><em>🥋</em>Martial Arts</div></td>
+              <td class="act"><div class="a a-design"><em>✏️</em>Graffiti / Design</div></td>
+            </tr>
+            <tr>
+              <td class="time">10:15 – 11:15</td>
+              <td class="act"><div class="a a-story"><em>📖</em>Storytelling</div></td>
+              <td class="act"><div class="a a-explore"><em>🔭</em>Discovery</div></td>
+              <td class="act"><div class="a a-explore"><em>🔭</em>Explore</div></td>
+            </tr>
+            <tr>
+              <td class="time">11:15 – 12:00</td>
+              <td class="act"><div class="a a-sensory"><em>🌿</em>Sensory Play</div></td>
+              <td class="act"><div class="a a-story"><em>✍️</em>Creative Writing</div></td>
+              <td class="act"><div class="a a-mma"><em>🥊</em>MMA Round 2</div></td>
+            </tr>
+            <tr><td class="time">12:00 – 12:30</td><td class="shared" colspan="3"><div class="a a-shared"><em>🍽️</em>Lunch — All Groups</div></td></tr>
+            <tr>
+              <td class="time">12:30 – 1:15</td>
+              <td class="act"><div class="a a-art"><em>🎨</em>Free Art</div></td>
+              <td class="act"><div class="a a-art"><em>🎨</em>Art Project</div></td>
+              <td class="act"><div class="a a-art"><em>🎨</em>Art &amp; Design</div></td>
+            </tr>
+            <tr><td class="time">1:15 – 1:30</td><td class="shared" colspan="3"><div class="a a-shared"><em>✅</em>Wrap-up &amp; Dismissal</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- THURSDAY -->
+    <div class="day-card">
+      <div class="day-header">
+        <div class="dh-left">
+          <div>
+            <div class="dh-day">Thursday 🏆</div>
+            <div class="dh-theme">Swimming + Ballet / Dance</div>
+          </div>
+        </div>
+        <div class="dh-badge">⭐ Star of the Week Ceremony</div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Time</th>
+            <th class="th-l">🌟 Little Stars</th>
+            <th class="th-r">⭐ Rising Stars</th>
+            <th class="th-f">🏆 Future Stars</th>
+          </tr></thead>
+          <tbody>
+            <tr><td class="time">7:30 – 8:00</td><td class="shared" colspan="3"><div class="a a-shared"><em>⭐</em>Morning Assembly — All Groups</div></td></tr>
+            <tr>
+              <td class="time">8:00 – 9:00</td>
+              <td class="act"><div class="a a-ballet"><em>💃</em>Ballet / Dance</div></td>
+              <td class="act"><div class="a a-explore"><em>🔭</em>Discovery Lab</div></td>
+              <td class="act"><div class="a a-art"><em>🎨</em>Art &amp; Design</div></td>
+            </tr>
+            <tr><td class="time">9:00 – 9:15</td><td class="shared" colspan="3"><div class="a a-shared"><em>🍊</em>Snack Break — All Groups</div></td></tr>
+            <tr>
+              <td class="time">9:15 – 10:15</td>
+              <td class="act"><div class="a a-swim"><em>🏊</em>Pool A</div></td>
+              <td class="act"><div class="a a-ballet"><em>💃</em>Dance Workshop</div></td>
+              <td class="act"><div class="a a-swim"><em>🏊</em>Pool B</div></td>
+            </tr>
+            <tr>
+              <td class="time">10:15 – 11:15</td>
+              <td class="act"><div class="a a-ballet"><em>💃</em>Ballet Final</div></td>
+              <td class="act"><div class="a a-swim"><em>🏊</em>Pool A</div></td>
+              <td class="act"><div class="a a-mma"><em>🥊</em>MMA Drills</div></td>
+            </tr>
+            <tr>
+              <td class="time">11:15 – 12:00</td>
+              <td class="act"><div class="a a-story"><em>📖</em>Storytelling</div></td>
+              <td class="act"><div class="a a-martial"><em>🥋</em>Martial Arts</div></td>
+              <td class="act"><div class="a a-explore"><em>🔭</em>Explore</div></td>
+            </tr>
+            <tr><td class="time">12:00 – 12:30</td><td class="shared" colspan="3"><div class="a a-shared"><em>🍽️</em>Lunch — All Groups</div></td></tr>
+            <tr>
+              <td class="time">12:30 – 1:15</td>
+              <td class="act"><div class="a a-art"><em>🎨</em>Art &amp; Crafts</div></td>
+              <td class="act"><div class="a a-story"><em>📖</em>Storytelling</div></td>
+              <td class="act"><div class="a a-design"><em>🎨</em>Design Sprint</div></td>
+            </tr>
+            <tr><td class="time">1:15 – 1:30</td><td class="shared" colspan="3"><div class="a a-shared" style="background:rgba(176,120,8,.18);border-color:rgba(176,120,8,.3)"><em>🏆</em>Week Wrap-up + Star of the Week Award</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </section>
+</div>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2 class="cta-title">Ready to give them a <span>summer to remember?</span></h2>
+  <p class="cta-sub">Spots are limited — registration is open now</p>
+  <a class="btn-gold" href="index.html#register">★ Register Now</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 Najoom Summer Experience &nbsp;·&nbsp; Dunes Club, Amman &nbsp;·&nbsp; <a href="index.html">Back to Home</a></p>
+</footer>
+
+</body>
+</html>

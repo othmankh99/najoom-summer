@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Najoom Summer 2026 — Designer Reference Sheet</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:#C02A2A; --red-dk:#8B1E1E; --gold:#E8A820; --gold-dk:#C48A10;
+  --gold-lt:#FDF3D8; --dark:#1A1212; --cream:#FFFBF7; --white:#ffffff;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Poppins',sans-serif;background:#E8E5E0;color:var(--dark);padding:52px;}
+
+/* ── PAGE HEADER ── */
+.pg-hd{text-align:center;margin-bottom:72px;}
+.pg-hd h1{font-size:2rem;font-weight:900;letter-spacing:-.025em;color:var(--dark);}
+.pg-hd h1 span{color:var(--red);}
+.pg-hd p{font-size:.72rem;color:#999;margin-top:6px;letter-spacing:.04em;text-transform:uppercase;}
+.pg-hd-sub{display:inline-flex;gap:24px;margin-top:18px;padding:12px 24px;background:white;border-radius:99px;font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#888;}
+.pg-hd-sub span{color:var(--red);}
+
+/* ── BRAND COLORS BAR ── */
+.brand-bar{display:flex;gap:10px;margin-bottom:72px;padding:28px;background:white;border-radius:18px;}
+.swatch{flex:1;border-radius:12px;padding:20px 16px;}
+.sw-name{font-size:.58rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;}
+.sw-hex{font-size:1.1rem;font-weight:900;font-family:monospace;}
+.sw-cmyk{font-size:.54rem;font-family:monospace;margin-top:4px;opacity:.7;}
+.sw-use{font-size:.54rem;font-weight:600;margin-top:6px;opacity:.6;}
+.sw-dark{color:#fff;} .sw-light{color:var(--dark);}
+
+/* ── SECTION ── */
+.sec{margin-bottom:88px;}
+.sec-title{
+  font-size:.68rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--red);padding-bottom:14px;border-bottom:2px solid var(--red);margin-bottom:44px;
+  display:flex;align-items:center;gap:12px;
+}
+.sec-title::after{content:'';flex:1;height:2px;background:rgba(192,42,42,.1);}
+
+/* ── MOCKUP WRAPPER ── */
+.mockup-row{display:flex;gap:44px;flex-wrap:wrap;align-items:flex-start;}
+.mockup-item{display:flex;flex-direction:column;align-items:center;}
+.item-label{font-size:.6rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--dark);margin-bottom:12px;text-align:center;}
+.spec-box{
+  margin-top:14px;padding:11px 16px;background:white;border-radius:10px;
+  border:1px solid rgba(0,0,0,.07);font-size:.57rem;line-height:1.85;color:#777;
+  text-align:center;min-width:120px;
+}
+.spec-box b{color:var(--dark);display:block;font-size:.65rem;font-weight:800;margin-bottom:3px;}
+.spec-box .qty{display:inline-block;margin-top:5px;padding:3px 10px;background:var(--red);color:#fff;border-radius:99px;font-size:.55rem;font-weight:800;letter-spacing:.06em;}
+
+/* ── DIM BADGE ── */
+.dim{
+  position:absolute;top:8px;right:8px;z-index:20;
+  background:var(--gold);color:#fff;font-size:.46rem;font-weight:800;
+  padding:3px 8px;border-radius:5px;letter-spacing:.04em;font-family:'Poppins',sans-serif;
+  box-shadow:0 2px 8px rgba(0,0,0,.25);
+}
+
+/* ═══════════════════════════════
+   1. MAIN SIGN  120×180 cm
+   Display: 200×300px
+═══════════════════════════════ */
+.sign-main{
+  width:200px;height:300px;
+  background:linear-gradient(155deg,#7A1818 0%,var(--red-dk) 45%,#601212 100%);
+  border-radius:6px;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+  padding:22px 18px;border:1px solid rgba(255,255,255,.07);
+}
+.sign-main::before{
+  content:'';position:absolute;top:-50px;right:-50px;
+  width:220px;height:220px;
+  background:radial-gradient(circle,rgba(232,168,32,.2) 0%,transparent 65%);
+}
+.sign-main::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:40px;
+  background:rgba(0,0,0,.25);
+}
+.sm-top{text-align:center;position:relative;z-index:2;}
+.sm-star{font-size:3rem;line-height:1;margin-bottom:6px;filter:drop-shadow(0 2px 8px rgba(232,168,32,.5));}
+.sm-ar{font-family:'Cairo',sans-serif;font-size:.72rem;font-weight:900;color:rgba(255,255,255,.55);letter-spacing:.06em;}
+.sm-en{font-size:1rem;font-weight:900;color:#fff;letter-spacing:.06em;line-height:1.05;}
+.sm-year{font-size:.65rem;font-weight:700;color:var(--gold);letter-spacing:.14em;margin-top:5px;}
+.sm-line{width:50px;height:1px;background:rgba(232,168,32,.35);margin:12px auto;}
+.sm-tag-ar{font-family:'Cairo',sans-serif;font-size:.6rem;font-weight:700;color:rgba(255,255,255,.5);text-align:center;}
+.sm-tag-en{font-size:.5rem;font-weight:600;color:rgba(255,255,255,.3);text-align:center;margin-top:2px;letter-spacing:.04em;}
+.sm-bot{text-align:center;width:100%;position:relative;z-index:3;}
+.sm-venue{font-size:.54rem;font-weight:700;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;}
+.sm-dates{font-size:.48rem;font-weight:600;color:rgba(255,255,255,.35);margin-top:3px;}
+
+/* ═══════════════════════════════
+   2. ENTRANCE BANNER  200×100 cm
+   Display: 480×240px
+═══════════════════════════════ */
+.banner-entry{
+  width:480px;height:240px;
+  background:linear-gradient(105deg,#6B1515 0%,var(--red-dk) 50%,#7A1A1A 100%);
+  border-radius:6px;position:relative;overflow:hidden;
+  display:flex;align-items:center;padding:0 36px;gap:28px;
+  border:1px solid rgba(255,255,255,.06);
+}
+.banner-entry::before{
+  content:'';position:absolute;right:-30px;top:50%;transform:translateY(-50%);
+  width:250px;height:250px;
+  background:radial-gradient(circle,rgba(232,168,32,.15) 0%,transparent 60%);
+}
+.be-left{flex-shrink:0;text-align:center;position:relative;z-index:2;}
+.be-star{font-size:3.4rem;line-height:1;filter:drop-shadow(0 2px 12px rgba(232,168,32,.5));}
+.be-name{font-size:.6rem;font-weight:900;color:#fff;letter-spacing:.08em;margin-top:5px;}
+.be-name span{color:var(--gold);}
+.be-divider{width:1px;height:90px;background:rgba(255,255,255,.14);flex-shrink:0;}
+.be-center{flex:1;position:relative;z-index:2;}
+.be-welcome-ar{font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:4px;}
+.be-title-ar{font-family:'Cairo',sans-serif;font-size:1.5rem;font-weight:900;color:#fff;line-height:1.15;}
+.be-title-en{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.45);margin-top:6px;letter-spacing:.04em;}
+.be-right{flex-shrink:0;text-align:center;padding:16px 20px;background:rgba(255,255,255,.08);border-radius:12px;border:1px solid rgba(255,255,255,.12);position:relative;z-index:2;}
+.be-dt-num{font-size:1.9rem;font-weight:900;color:var(--gold);line-height:1;}
+.be-dt-lbl{font-size:.46rem;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.1em;text-transform:uppercase;margin-top:3px;}
+.be-dt-sub{font-size:.5rem;font-weight:600;color:rgba(255,255,255,.5);margin-top:5px;}
+
+/* ═══════════════════════════════
+   3. REG DESK BANNER  80×200 cm
+   Display: 160×400px
+═══════════════════════════════ */
+.banner-reg{
+  width:160px;height:400px;
+  background:var(--dark);
+  border-radius:6px;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+  padding:22px 14px;border:1px solid rgba(255,255,255,.06);
+}
+.banner-reg::before{
+  content:'';position:absolute;top:-30px;left:50%;transform:translateX(-50%);
+  width:160px;height:160px;
+  background:radial-gradient(circle,rgba(232,168,32,.1) 0%,transparent 65%);
+}
+.br-top{text-align:center;position:relative;z-index:2;}
+.br-star{font-size:1.9rem;margin-bottom:5px;}
+.br-name{font-size:.56rem;font-weight:900;color:#fff;letter-spacing:.06em;}
+.br-name span{color:var(--gold);}
+.br-year{font-size:.44rem;color:rgba(255,255,255,.3);letter-spacing:.08em;margin-top:2px;}
+.br-mid{text-align:center;width:100%;position:relative;z-index:2;}
+.br-reg-ar{font-family:'Cairo',sans-serif;font-size:1.1rem;font-weight:900;color:var(--gold);}
+.br-reg-en{font-size:.52rem;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.12em;text-transform:uppercase;margin-top:3px;}
+.br-line{width:40px;height:1px;background:rgba(232,168,32,.3);margin:10px auto;}
+.br-qr{
+  width:72px;height:72px;background:white;border-radius:8px;
+  margin:12px auto;display:flex;align-items:center;justify-content:center;
+  flex-direction:column;font-size:.4rem;font-weight:700;color:#bbb;text-align:center;
+  gap:3px;
+}
+.br-qr-grid{display:grid;grid-template-columns:repeat(5,8px);grid-template-rows:repeat(5,8px);gap:2px;padding:6px;}
+.br-qr-cell{background:var(--dark);border-radius:1px;}
+.br-url{font-size:.44rem;color:rgba(255,255,255,.35);text-align:center;margin-top:4px;letter-spacing:.02em;}
+.br-wa{font-size:.48rem;font-weight:700;color:#25D366;text-align:center;margin-top:6px;}
+.br-bot{width:100%;position:relative;z-index:2;}
+.br-bot-strip{background:var(--red);border-radius:6px;padding:9px 10px;text-align:center;}
+.br-bot-ar{font-family:'Cairo',sans-serif;font-size:.62rem;font-weight:900;color:#fff;}
+.br-bot-en{font-size:.44rem;font-weight:700;color:rgba(255,255,255,.55);margin-top:2px;letter-spacing:.06em;}
+
+/* ═══════════════════════════════
+   4. ACTIVITY ZONE SIGN  60×90 cm
+   Display: 150×225px
+═══════════════════════════════ */
+.act-sign{
+  width:150px;height:225px;
+  background:var(--dark);border-radius:6px;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:18px 12px;border-top:6px solid var(--gold);
+}
+.as-emoji{font-size:2.8rem;margin-bottom:10px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4));}
+.as-ar{font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:900;color:#fff;text-align:center;line-height:1.3;}
+.as-en{font-size:.48rem;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.12em;text-transform:uppercase;text-align:center;margin-top:5px;}
+.as-line{width:28px;height:1px;background:rgba(232,168,32,.4);margin:10px auto;}
+.as-sched{font-size:.44rem;color:rgba(255,255,255,.28);text-align:center;}
+.act-sign.gold-top{border-top-color:var(--gold);}
+.act-sign.red-top{border-top-color:var(--red);}
+
+/* ═══════════════════════════════
+   5. DIRECTIONAL  30×60 cm
+   Display: 90×180px
+═══════════════════════════════ */
+.dir-sign{
+  width:90px;height:180px;
+  background:var(--red-dk);border-radius:6px;position:relative;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:14px 10px;overflow:hidden;
+}
+.dir-sign::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.1) 0%,transparent 100%);
+}
+.ds-arrow{font-size:2.2rem;color:var(--gold);margin-bottom:8px;position:relative;z-index:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,.3));}
+.ds-ar{font-family:'Cairo',sans-serif;font-size:.65rem;font-weight:900;color:#fff;text-align:center;position:relative;z-index:1;}
+.ds-en{font-size:.42rem;font-weight:700;color:rgba(255,255,255,.38);letter-spacing:.08em;text-transform:uppercase;text-align:center;margin-top:3px;position:relative;z-index:1;}
+
+/* ═══════════════════════════════
+   SHIRT — SVG based
+═══════════════════════════════ */
+.shirt-wrap{position:relative;display:inline-block;}
+
+/* ═══════════════════════════════
+   NAME TAG  9×5.5 cm → 270×165px
+═══════════════════════════════ */
+.nametag{
+  width:270px;height:165px;background:white;
+  border-radius:12px;border:1px solid rgba(0,0,0,.09);
+  box-shadow:0 6px 28px rgba(0,0,0,.1);
+  display:flex;flex-direction:column;overflow:hidden;position:relative;
+}
+.nt-body{padding:16px 18px;flex:1;display:flex;align-items:flex-start;gap:12px;}
+.nt-logo-col{flex-shrink:0;display:flex;flex-direction:column;align-items:center;}
+.nt-logo-star{font-size:1.5rem;line-height:1;}
+.nt-logo-name{font-size:.48rem;font-weight:900;color:var(--dark);letter-spacing:.04em;margin-top:3px;text-align:center;}
+.nt-logo-name span{color:var(--gold);}
+.nt-sep{width:1px;height:100%;background:rgba(0,0,0,.06);flex-shrink:0;}
+.nt-info{flex:1;padding-left:2px;}
+.nt-role{font-size:.5rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:5px;}
+.nt-name-ph{font-size:1.2rem;font-weight:800;color:var(--dark);letter-spacing:-.01em;}
+.nt-name-ar{font-family:'Cairo',sans-serif;font-size:.5rem;color:rgba(26,18,18,.35);margin-top:2px;}
+.nt-foot{
+  background:var(--red);padding:9px 18px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.nt-foot-en{font-size:.52rem;font-weight:800;color:#fff;letter-spacing:.06em;text-transform:uppercase;}
+.nt-foot-ar{font-family:'Cairo',sans-serif;font-size:.52rem;font-weight:800;color:rgba(255,255,255,.65);}
+
+/* ═══════════════════════════════
+   CAP
+═══════════════════════════════ */
+.cap-outer{position:relative;width:220px;}
+
+/* ═══════════════════════════════
+   WRISTBAND  25×2.5 cm → 360×36px
+═══════════════════════════════ */
+.wristband{
+  width:360px;height:36px;border-radius:18px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;
+}
+.wb-text{font-size:.55rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#fff;}
+.wb-ar{font-family:'Cairo',sans-serif;font-size:.55rem;font-weight:800;color:rgba(255,255,255,.8);}
+.wb-star{font-size:.9rem;}
+
+/* ── ANNOTATION LINE ── */
+.anno{
+  display:flex;align-items:center;gap:6px;
+  font-size:.55rem;font-weight:700;color:#999;margin-top:6px;
+}
+.anno-line{flex:1;height:1px;background:#ccc;}
+
+/* ── NOTES ── */
+.note-box{
+  padding:14px 20px;background:var(--gold-lt);border-left:4px solid var(--gold);
+  border-radius:0 10px 10px 0;font-size:.68rem;font-weight:500;
+  color:var(--dark);line-height:1.7;margin-top:32px;
+}
+.note-box b{font-weight:800;}
+
+/* ── FONT SAMPLE ── */
+.font-row{display:flex;gap:20px;margin-bottom:44px;}
+.font-card{flex:1;padding:22px;background:white;border-radius:14px;}
+.font-label{font-size:.56rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#aaa;margin-bottom:10px;}
+.font-sample-en{font-size:1.4rem;font-weight:900;color:var(--dark);letter-spacing:-.01em;}
+.font-sample-ar{font-family:'Cairo',sans-serif;font-size:1.4rem;font-weight:900;color:var(--dark);}
+.font-weights{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;}
+.fw{font-size:.7rem;color:#888;}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════ PAGE HEADER -->
+<div class="pg-hd">
+  <h1>NAJOOM SUMMER <span>2026</span></h1>
+  <p>Designer Reference Sheet — All Branding Elements</p>
+  <div class="pg-hd-sub">
+    <span>Prepared for print &amp; production</span> ·
+    <span>All dimensions are final</span> ·
+    <span>Do not alter proportions</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ BRAND COLORS -->
+<div class="sec">
+  <div class="sec-title">Brand Colours — Use These Exact Values</div>
+  <div class="brand-bar">
+
+    <div class="swatch sw-dark" style="background:var(--red-dk);">
+      <div class="sw-name">Primary Red</div>
+      <div class="sw-hex">#8B1E1E</div>
+      <div class="sw-cmyk">CMYK — C:0 M:86 Y:86 K:45</div>
+      <div class="sw-use">Backgrounds, main sign, banners</div>
+    </div>
+
+    <div class="swatch sw-dark" style="background:var(--red);">
+      <div class="sw-name">Accent Red</div>
+      <div class="sw-hex">#C02A2A</div>
+      <div class="sw-cmyk">CMYK — C:0 M:86 Y:86 K:25</div>
+      <div class="sw-use">Buttons, strips, tags, borders</div>
+    </div>
+
+    <div class="swatch sw-light" style="background:var(--gold);">
+      <div class="sw-name">Gold</div>
+      <div class="sw-hex">#E8A820</div>
+      <div class="sw-cmyk">CMYK — C:0 M:28 Y:100 K:0</div>
+      <div class="sw-use">Star, accents, key highlights</div>
+    </div>
+
+    <div class="swatch sw-dark" style="background:var(--dark);">
+      <div class="sw-name">Near Black</div>
+      <div class="sw-hex">#1A1212</div>
+      <div class="sw-cmyk">CMYK — C:0 M:0 Y:0 K:90</div>
+      <div class="sw-use">Registration banner, name tags</div>
+    </div>
+
+    <div class="swatch sw-light" style="background:#FFFBF7;border:1px solid rgba(0,0,0,.08);">
+      <div class="sw-name">Cream / White</div>
+      <div class="sw-hex">#FFFBF7</div>
+      <div class="sw-cmyk">CMYK — C:0 M:0 Y:0 K:0</div>
+      <div class="sw-use">Text on dark backgrounds, cards</div>
+    </div>
+
+  </div>
+
+  <!-- FONTS -->
+  <div class="font-row">
+    <div class="font-card">
+      <div class="font-label">English Typeface</div>
+      <div class="font-sample-en">Poppins</div>
+      <div class="font-weights">
+        <span class="fw" style="font-weight:700">Bold 700</span>
+        <span class="fw" style="font-weight:800">ExtraBold 800</span>
+        <span class="fw" style="font-weight:900">Black 900</span>
+      </div>
+      <div style="font-size:.58rem;color:#bbb;margin-top:8px;">Google Fonts — Free download</div>
+    </div>
+    <div class="font-card">
+      <div class="font-label">Arabic Typeface</div>
+      <div class="font-sample-ar" style="text-align:right;">Cairo</div>
+      <div class="font-weights" style="justify-content:flex-end;">
+        <span class="fw" style="font-weight:700;font-family:'Cairo',sans-serif;">Bold 700</span>
+        <span class="fw" style="font-weight:800;font-family:'Cairo',sans-serif;">ExtraBold 800</span>
+        <span class="fw" style="font-weight:900;font-family:'Cairo',sans-serif;">Black 900</span>
+      </div>
+      <div style="font-size:.58rem;color:#bbb;margin-top:8px;">Google Fonts — Free download</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ SECTION 1: SIGNAGE -->
+<div class="sec">
+  <div class="sec-title">Section 01 — On-Site Signage</div>
+
+  <!-- ROW 1: MAIN SIGN + ENTRANCE BANNER -->
+  <div class="mockup-row" style="margin-bottom:56px;">
+
+    <!-- 1. MAIN SIGN -->
+    <div class="mockup-item">
+      <div class="item-label">01 — Main Najoom Sign</div>
+      <div style="position:relative;display:inline-block;">
+        <div class="sign-main">
+          <div class="dim">120 × 180 cm</div>
+          <div class="sm-top">
+            <div class="sm-star">⭐</div>
+            <div class="sm-ar">نجوم سمر</div>
+            <div class="sm-en">NAJOOM<br>SUMMER</div>
+            <div class="sm-year">EXPERIENCE 2026</div>
+            <div class="sm-line"></div>
+            <div class="sm-tag-ar">صيف ما رح ينساه</div>
+            <div class="sm-tag-en">A Summer They Will Remember</div>
+          </div>
+          <div class="sm-bot">
+            <div class="sm-venue">Dunes Club · Amman</div>
+            <div class="sm-dates">June 14 – July 11, 2026</div>
+          </div>
+        </div>
+      </div>
+      <div class="spec-box">
+        <b>MAIN ENTRANCE SIGN</b>
+        Size: 120 × 180 cm<br>
+        Format: PDF / AI (vector)<br>
+        Resolution: 150 DPI<br>
+        Bleed: 3 mm all sides<br>
+        Color mode: CMYK<br>
+        Material: Foam board or PVC<br>
+        <span class="qty">QTY: 1</span>
+      </div>
+    </div>
+
+    <!-- 2. ENTRANCE BANNER -->
+    <div class="mockup-item">
+      <div class="item-label">02 — Entrance Welcome Banner</div>
+      <div style="position:relative;display:inline-block;">
+        <div class="banner-entry">
+          <div class="dim">200 × 100 cm</div>
+          <div class="be-left">
+            <div class="be-star">⭐</div>
+            <div class="be-name">NAJ<span>O</span>OM</div>
+          </div>
+          <div class="be-divider"></div>
+          <div class="be-center">
+            <div class="be-welcome-ar">أهلاً وسهلاً بكم في</div>
+            <div class="be-title-ar">نجوم سمر ٢٠٢٦</div>
+            <div class="be-title-en">Welcome to Najoom Summer 2026</div>
+          </div>
+          <div class="be-right">
+            <div class="be-dt-num">14<br><span style="font-size:.9rem;">JUNE</span></div>
+            <div class="be-dt-lbl">Opening Day</div>
+            <div class="be-dt-sub">Dunes Club, Amman</div>
+          </div>
+        </div>
+      </div>
+      <div class="spec-box">
+        <b>ENTRANCE WELCOME BANNER</b>
+        Size: 200 × 100 cm<br>
+        Format: PDF / AI (vector)<br>
+        Resolution: 150 DPI<br>
+        Bleed: 3 mm all sides<br>
+        Color mode: CMYK<br>
+        Material: Vinyl / flex print<br>
+        <span class="qty">QTY: 1</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ROW 2: REG BANNER + ACTIVITY SIGNS -->
+  <div class="mockup-row" style="align-items:flex-start;margin-bottom:56px;">
+
+    <!-- 3. REG DESK BANNER -->
+    <div class="mockup-item">
+      <div class="item-label">03 — Registration Desk Banner</div>
+      <div style="position:relative;display:inline-block;">
+        <div class="banner-reg">
+          <div class="dim">80 × 200 cm</div>
+          <div class="br-top">
+            <div class="br-star">⭐</div>
+            <div class="br-name">NAJ<span>O</span>OM</div>
+            <div class="br-year">SUMMER 2026</div>
+          </div>
+          <div class="br-mid">
+            <div class="br-reg-ar">التسجيل</div>
+            <div class="br-reg-en">Registration</div>
+            <div class="br-line"></div>
+            <div class="br-qr">
+              <div style="font-size:.4rem;color:#aaa;text-align:center;padding:4px;">QR<br>CODE<br>HERE</div>
+            </div>
+            <div class="br-url">najoom-summer.netlify.app</div>
+            <div class="br-wa">WhatsApp: 0799 176 917</div>
+          </div>
+          <div class="br-bot">
+            <div class="br-bot-strip">
+              <div class="br-bot-ar">سجّل الآن — أماكن محدودة</div>
+              <div class="br-bot-en">Register Now — Limited Spots</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="spec-box">
+        <b>REGISTRATION DESK BANNER</b>
+        Size: 80 × 200 cm<br>
+        Format: PDF / AI (vector)<br>
+        Resolution: 150 DPI<br>
+        Bleed: 3 mm all sides<br>
+        Color mode: CMYK<br>
+        Material: Roll-up / flex print<br>
+        <span class="qty">QTY: 1</span>
+      </div>
+    </div>
+
+    <!-- 4. ACTIVITY ZONE SIGNS ×5 -->
+    <div class="mockup-item" style="align-items:flex-start;">
+      <div class="item-label" style="text-align:left;">04 — Activity Zone Signs × 5</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;max-width:820px;">
+
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:.5rem;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Swimming</div>
+          <div style="position:relative;display:inline-block;">
+            <div class="act-sign gold-top">
+              <div class="dim">60 × 90 cm</div>
+              <div class="as-emoji">🏊</div>
+              <div class="as-ar">السباحة</div>
+              <div class="as-en">Swimming</div>
+              <div class="as-line"></div>
+              <div class="as-sched">All age groups</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:.5rem;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Martial Arts</div>
+          <div style="position:relative;display:inline-block;">
+            <div class="act-sign red-top">
+              <div class="dim">60 × 90 cm</div>
+              <div class="as-emoji">🥋</div>
+              <div class="as-ar">فنون القتال</div>
+              <div class="as-en">Martial Arts</div>
+              <div class="as-line"></div>
+              <div class="as-sched">Taekwondo · Kickboxing · MMA</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:.5rem;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Art & Crafts</div>
+          <div style="position:relative;display:inline-block;">
+            <div class="act-sign gold-top">
+              <div class="dim">60 × 90 cm</div>
+              <div class="as-emoji">🎨</div>
+              <div class="as-ar">الفن والإبداع</div>
+              <div class="as-en">Art & Creativity</div>
+              <div class="as-line"></div>
+              <div class="as-sched">All age groups</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:.5rem;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Ballet</div>
+          <div style="position:relative;display:inline-block;">
+            <div class="act-sign red-top">
+              <div class="dim">60 × 90 cm</div>
+              <div class="as-emoji">🩰</div>
+              <div class="as-ar">الباليه والرقص</div>
+              <div class="as-en">Ballet & Dance</div>
+              <div class="as-line"></div>
+              <div class="as-sched">Little Stars · Rising Stars</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:.5rem;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Exploration</div>
+          <div style="position:relative;display:inline-block;">
+            <div class="act-sign gold-top">
+              <div class="dim">60 × 90 cm</div>
+              <div class="as-emoji">🔭</div>
+              <div class="as-ar">الاستكشاف</div>
+              <div class="as-en">Explore & Discover</div>
+              <div class="as-line"></div>
+              <div class="as-sched">Rising Stars · Future Stars</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="spec-box" style="margin-top:18px;text-align:left;min-width:780px;">
+        <b>ACTIVITY ZONE SIGNS — All 5 pieces follow the same layout, different emoji + name only</b>
+        Size per sign: 60 × 90 cm &nbsp;·&nbsp; Format: PDF / AI (vector) &nbsp;·&nbsp; Resolution: 150 DPI &nbsp;·&nbsp; Bleed: 3 mm &nbsp;·&nbsp; CMYK &nbsp;·&nbsp; Material: Foam board or PVC
+        <span class="qty" style="margin-left:8px;">QTY: 5 pieces (1 per activity)</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ROW 3: DIRECTIONAL SIGNS -->
+  <div class="mockup-row">
+    <div class="mockup-item" style="align-items:flex-start;">
+      <div class="item-label">05 — Directional Signs × 6</div>
+      <div style="display:flex;gap:14px;">
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:.5rem;color:#aaa;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;">Pool ↑</div>
+          <div style="position:relative;display:inline-block;">
+            <div class="dir-sign"><div class="dim" style="font-size:.4rem;">30×60 cm</div><div class="ds-arrow">↑</div><div class="ds-ar">المسبح</div><div class="ds-en">Pool</div></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:.5rem;color:#aaa;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;">Martial Arts →</div>
+          <div style="position:relative;display:inline-block;">
+            <div class="dir-sign"><div class="dim" style="font-size:.4rem;">30×60 cm</div><div class="ds-arrow">→</div><div class="ds-ar">فنون القتال</div><div class="ds-en">Martial Arts</div></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:.5rem;color:#aaa;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;">Art Zone ↓</div>
+          <div style="position:relative;display:inline-block;">
+            <div class="dir-sign"><div class="dim" style="font-size:.4rem;">30×60 cm</div><div class="ds-arrow">↓</div><div class="ds-ar">منطقة الفن</div><div class="ds-en">Art Zone</div></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:.5rem;color:#aaa;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;">Registration ←</div>
+          <div style="position:relative;display:inline-block;">
+            <div class="dir-sign"><div class="dim" style="font-size:.4rem;">30×60 cm</div><div class="ds-arrow">←</div><div class="ds-ar">التسجيل</div><div class="ds-en">Registration</div></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:.5rem;color:#aaa;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;">Toilets →</div>
+          <div style="position:relative;display:inline-block;">
+            <div class="dir-sign"><div class="dim" style="font-size:.4rem;">30×60 cm</div><div class="ds-arrow">→</div><div class="ds-ar">دورات المياه</div><div class="ds-en">Toilets</div></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="font-size:.5rem;color:#aaa;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;">Parking ↓</div>
+          <div style="position:relative;display:inline-block;">
+            <div class="dir-sign"><div class="dim" style="font-size:.4rem;">30×60 cm</div><div class="ds-arrow">↓</div><div class="ds-ar">الباركينج</div><div class="ds-en">Parking</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="spec-box" style="margin-top:18px;text-align:left;min-width:600px;">
+        <b>DIRECTIONAL SIGNS — Same design, only arrow direction and destination text changes</b>
+        Size: 30 × 60 cm &nbsp;·&nbsp; Format: PDF / AI &nbsp;·&nbsp; Resolution: 150 DPI &nbsp;·&nbsp; CMYK &nbsp;·&nbsp; Material: Foam board, wall-mounted
+        <span class="qty" style="margin-left:8px;">QTY: 6 pieces</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /sec signage -->
+
+
+<!-- ═══════════════════════════════════════════════ SECTION 2: UNIFORMS -->
+<div class="sec">
+  <div class="sec-title">Section 02 — Staff Uniforms & Wearables</div>
+
+  <!-- ROW 1: COACH + VOLUNTEER SHIRTS -->
+  <div class="mockup-row" style="margin-bottom:56px;">
+
+    <!-- COACH SHIRT -->
+    <div class="mockup-item">
+      <div class="item-label">06 — Coach T-Shirt</div>
+      <svg width="220" height="240" viewBox="0 0 220 240" xmlns="http://www.w3.org/2000/svg">
+        <!-- shirt body -->
+        <path d="M 75,12 Q 110,40 145,12 L 215,68 L 175,86 L 175,232 L 45,232 L 45,86 L 5,68 Z" fill="#8B1E1E" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+        <!-- collar shadow -->
+        <path d="M 75,12 Q 110,40 145,12" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="2"/>
+        <!-- chest logo area -->
+        <circle cx="110" cy="130" r="36" fill="rgba(232,168,32,.12)" stroke="rgba(232,168,32,.2)" stroke-width="1"/>
+        <!-- star -->
+        <text x="110" y="120" text-anchor="middle" font-size="26" fill="#E8A820" style="filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))">⭐</text>
+        <!-- NAJOOM text -->
+        <text x="110" y="138" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" font-weight="900" fill="white" letter-spacing="3">NAJOOM</text>
+        <!-- COACH text -->
+        <text x="110" y="153" text-anchor="middle" font-family="Poppins,sans-serif" font-size="7.5" font-weight="700" fill="rgba(255,255,255,.5)" letter-spacing="4">COACH</text>
+        <!-- sleeve text -->
+        <text x="28" y="58" text-anchor="middle" font-family="Poppins,sans-serif" font-size="5.5" font-weight="700" fill="rgba(255,255,255,.35)" transform="rotate(-35 28 58)" letter-spacing="1">2026</text>
+        <!-- dimension badge -->
+        <rect x="148" y="6" width="64" height="16" rx="4" fill="#E8A820"/>
+        <text x="180" y="17" text-anchor="middle" font-family="Poppins,sans-serif" font-size="6.5" font-weight="800" fill="white">CHEST PRINT 30×30cm</text>
+      </svg>
+      <div class="spec-box">
+        <b>COACH T-SHIRT</b>
+        Shirt color: Dark Red #8B1E1E<br>
+        Print: Gold #E8A820 chest logo<br>
+        Print area: 30 × 30 cm<br>
+        Format: AI / PDF vector<br>
+        Resolution: 300 DPI<br>
+        Print method: Screen print or DTF<br>
+        Sizes: Confirm per coach<br>
+        <span class="qty">QTY: 21 shirts</span>
+      </div>
+    </div>
+
+    <!-- VOLUNTEER SHIRT -->
+    <div class="mockup-item">
+      <div class="item-label">07 — Volunteer T-Shirt</div>
+      <svg width="220" height="240" viewBox="0 0 220 240" xmlns="http://www.w3.org/2000/svg">
+        <!-- shirt body — cream/gold color to distinguish from coaches -->
+        <path d="M 75,12 Q 110,40 145,12 L 215,68 L 175,86 L 175,232 L 45,232 L 45,86 L 5,68 Z" fill="#E8A820" stroke="rgba(0,0,0,.07)" stroke-width="1"/>
+        <path d="M 75,12 Q 110,40 145,12" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="2"/>
+        <!-- chest logo area -->
+        <circle cx="110" cy="130" r="36" fill="rgba(139,30,30,.12)" stroke="rgba(139,30,30,.18)" stroke-width="1"/>
+        <!-- star -->
+        <text x="110" y="120" text-anchor="middle" font-size="26" fill="#8B1E1E">⭐</text>
+        <!-- NAJOOM text -->
+        <text x="110" y="138" text-anchor="middle" font-family="Poppins,sans-serif" font-size="10" font-weight="900" fill="#1A1212" letter-spacing="3">NAJOOM</text>
+        <!-- VOLUNTEER text -->
+        <text x="110" y="153" text-anchor="middle" font-family="Poppins,sans-serif" font-size="6" font-weight="700" fill="rgba(26,18,18,.5)" letter-spacing="3">VOLUNTEER</text>
+        <!-- sleeve -->
+        <text x="28" y="58" text-anchor="middle" font-family="Poppins,sans-serif" font-size="5.5" font-weight="700" fill="rgba(26,18,18,.3)" transform="rotate(-35 28 58)" letter-spacing="1">2026</text>
+        <!-- dimension badge -->
+        <rect x="148" y="6" width="64" height="16" rx="4" fill="#C02A2A"/>
+        <text x="180" y="17" text-anchor="middle" font-family="Poppins,sans-serif" font-size="6.5" font-weight="800" fill="white">CHEST PRINT 30×30cm</text>
+      </svg>
+      <div class="spec-box">
+        <b>VOLUNTEER T-SHIRT</b>
+        Shirt color: Gold #E8A820<br>
+        Print: Dark Red chest logo<br>
+        Print area: 30 × 30 cm<br>
+        Format: AI / PDF vector<br>
+        Resolution: 300 DPI<br>
+        Different color from coaches<br>
+        so parents can tell apart<br>
+        <span class="qty">QTY: 42 shirts</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ROW 2: CAP + NAME TAG -->
+  <div class="mockup-row" style="margin-bottom:56px;">
+
+    <!-- CAP -->
+    <div class="mockup-item">
+      <div class="item-label">08 — Staff Cap (Front Panel View)</div>
+      <svg width="240" height="180" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
+        <!-- cap body -->
+        <ellipse cx="120" cy="90" rx="100" ry="75" fill="#8B1E1E"/>
+        <!-- top dome curve -->
+        <path d="M 20,90 Q 20,20 120,15 Q 220,20 220,90" fill="#8B1E1E" stroke="rgba(0,0,0,.2)" stroke-width="1"/>
+        <!-- brim/visor -->
+        <ellipse cx="120" cy="155" rx="90" ry="18" fill="#6B1515"/>
+        <path d="M 30,148 Q 120,172 210,148 L 210,158 Q 120,182 30,158 Z" fill="#5C1212"/>
+        <!-- front panel center logo area -->
+        <circle cx="120" cy="90" r="42" fill="rgba(0,0,0,.2)"/>
+        <!-- star -->
+        <text x="120" y="82" text-anchor="middle" font-size="24" fill="#E8A820" style="filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))">⭐</text>
+        <!-- NAJOOM under star -->
+        <text x="120" y="100" text-anchor="middle" font-family="Poppins,sans-serif" font-size="9" font-weight="900" fill="white" letter-spacing="3.5">NAJOOM</text>
+        <!-- sweatband line -->
+        <path d="M 22,128 Q 120,138 218,128" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="2"/>
+        <!-- adjustment strap hint at back -->
+        <rect x="108" y="8" width="24" height="8" rx="3" fill="rgba(0,0,0,.2)"/>
+        <!-- dimension badge -->
+        <rect x="162" y="6" width="72" height="16" rx="4" fill="#E8A820"/>
+        <text x="198" y="17" text-anchor="middle" font-family="Poppins,sans-serif" font-size="6.5" font-weight="800" fill="white">FRONT PANEL PRINT</text>
+      </svg>
+      <div class="spec-box">
+        <b>STAFF CAP</b>
+        Cap color: Dark Red #8B1E1E<br>
+        Logo: Gold star + NAJOOM text<br>
+        Front panel print area<br>
+        Method: Embroidery preferred<br>
+        (or heat transfer if embroidery unavailable)<br>
+        Embroidery file: AI or DST format<br>
+        One size fits most / adjustable<br>
+        <span class="qty">QTY: 63 caps (21 coaches + 42 volunteers)</span>
+      </div>
+    </div>
+
+    <!-- NAME TAG -->
+    <div class="mockup-item">
+      <div class="item-label">09 — Coach Name Tag &nbsp; <span style="font-size:.55rem;font-weight:500;color:#aaa;">(Shown 3× actual size)</span></div>
+      <div style="position:relative;display:inline-block;">
+        <div class="nametag">
+          <div class="dim" style="top:6px;right:6px;font-size:.44rem;">9 × 5.5 cm</div>
+          <div class="nt-body">
+            <div class="nt-logo-col">
+              <div class="nt-logo-star">⭐</div>
+              <div class="nt-logo-name">NAJ<span>O</span>OM</div>
+            </div>
+            <div class="nt-sep"></div>
+            <div class="nt-info">
+              <div class="nt-role">Coach</div>
+              <div class="nt-name-ph">[Coach Name]</div>
+              <div class="nt-name-ar">اسم المدرب</div>
+            </div>
+          </div>
+          <div class="nt-foot">
+            <div class="nt-foot-en">Najoom Summer 2026</div>
+            <div class="nt-foot-ar">نجوم سمر ٢٠٢٦</div>
+          </div>
+        </div>
+      </div>
+      <div class="spec-box">
+        <b>COACH NAME TAG</b>
+        Size: 9 × 5.5 cm (credit card size)<br>
+        Format: AI / PDF per name<br>
+        Resolution: 300 DPI<br>
+        Material: PVC card or laminated card<br>
+        Delivery: Lanyard or clip-on<br>
+        Replace [Coach Name] with each name<br>
+        Also make 1 version for VOLUNTEER role<br>
+        <span class="qty">QTY: 21 coaches + 42 volunteers = 63 tags</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ROW 3: WRISTBANDS -->
+  <div class="mockup-row">
+    <div class="mockup-item" style="align-items:flex-start;">
+      <div class="item-label">10 — Kids Wristbands × 3 Colours (by Age Group)</div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="font-size:.55rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;width:100px;text-align:right;">Little Stars<br>Ages 4–6</div>
+          <div style="position:relative;display:inline-block;">
+            <div class="wristband" style="background:var(--red-dk);">
+              <div class="wb-star">⭐</div>
+              <div class="wb-text">NAJOOM SUMMER</div>
+              <div class="wb-ar">نجوم سمر · 2026</div>
+              <div class="wb-star">⭐</div>
+            </div>
+            <div class="dim" style="top:-10px;right:0px;font-size:.4rem;">25 × 2.5 cm</div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="font-size:.55rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;width:100px;text-align:right;">Rising Stars<br>Ages 7–10</div>
+          <div style="position:relative;display:inline-block;">
+            <div class="wristband" style="background:var(--gold-dk);">
+              <div class="wb-star">⭐</div>
+              <div class="wb-text">NAJOOM SUMMER</div>
+              <div class="wb-ar">نجوم سمر · 2026</div>
+              <div class="wb-star">⭐</div>
+            </div>
+            <div class="dim" style="top:-10px;right:0px;font-size:.4rem;">25 × 2.5 cm</div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="font-size:.55rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;width:100px;text-align:right;">Future Stars<br>Ages 11–14</div>
+          <div style="position:relative;display:inline-block;">
+            <div class="wristband" style="background:var(--dark);">
+              <div class="wb-star">⭐</div>
+              <div class="wb-text">NAJOOM SUMMER</div>
+              <div class="wb-ar">نجوم سمر · 2026</div>
+              <div class="wb-star">⭐</div>
+            </div>
+            <div class="dim" style="top:-10px;right:0px;font-size:.4rem;">25 × 2.5 cm</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="spec-box" style="margin-top:18px;text-align:left;min-width:520px;">
+        <b>KIDS WRISTBANDS — 3 colour variants, one per age group</b>
+        Size: 25 × 2.5 cm &nbsp;·&nbsp; Material: Silicone or Tyvek &nbsp;·&nbsp; Resolution: 300 DPI &nbsp;·&nbsp; Format: AI / PDF
+        <span class="qty" style="margin-left:8px;">QTY: 100 per colour = 300 total</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /sec uniforms -->
+
+
+<!-- ═══════════════════════════════════════════════ PRINT NOTES -->
+<div class="sec">
+  <div class="sec-title">Print Production Notes</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+    <div class="note-box">
+      <b>For the Print Shop:</b>
+      All files should be delivered as PDF or AI (vector).<br>
+      Add 3 mm bleed on all sides for cutting.<br>
+      All colors in CMYK mode — not RGB.<br>
+      Text must be outlined / converted to paths before sending.<br>
+      Material suggestion: PVC foam board for signs, flex print for banners.
+    </div>
+    <div class="note-box">
+      <b>For the Graphic Designer:</b>
+      Use only Poppins (English) and Cairo (Arabic) — no other fonts.<br>
+      Do not modify or stretch the star shape.<br>
+      Maintain color values exactly — no approximations.<br>
+      All text bilingual: Arabic first, English second.<br>
+      Every file delivered separately, named by item number.
+    </div>
+  </div>
+  <div style="margin-top:20px;padding:16px 20px;background:white;border-radius:12px;border:1px solid rgba(0,0,0,.07);">
+    <div style="font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#aaa;margin-bottom:12px;">File Naming Convention</div>
+    <div style="font-family:monospace;font-size:.7rem;color:var(--dark);line-height:2;">
+      01_najoom_main-sign_120x180.pdf &nbsp;&nbsp; 02_najoom_entry-banner_200x100.pdf &nbsp;&nbsp;
+      03_najoom_reg-banner_80x200.pdf<br>
+      04a_najoom_zone-swimming_60x90.pdf &nbsp;&nbsp; 04b_najoom_zone-martialarts_60x90.pdf &nbsp;&nbsp; 04c_najoom_zone-art_60x90.pdf<br>
+      04d_najoom_zone-ballet_60x90.pdf &nbsp;&nbsp; 04e_najoom_zone-explore_60x90.pdf &nbsp;&nbsp; 05_najoom_directional_30x60.pdf<br>
+      06_najoom_coach-shirt_print.pdf &nbsp;&nbsp; 07_najoom_volunteer-shirt_print.pdf &nbsp;&nbsp; 08_najoom_cap-logo.pdf<br>
+      09a_najoom_nametag-coach.pdf &nbsp;&nbsp; 09b_najoom_nametag-volunteer.pdf &nbsp;&nbsp; 10_najoom_wristbands-3colors.pdf
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;padding:32px 0;font-size:.58rem;color:#bbb;letter-spacing:.06em;text-transform:uppercase;">
+  Najoom Summer Experience 2026 — Dunes Club, Amman — Opening June 14
+</div>
+
+</body>
+</html>

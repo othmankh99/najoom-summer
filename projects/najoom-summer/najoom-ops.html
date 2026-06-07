@@ -1,0 +1,2288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Najoom Ops</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <style>
+    :root {
+      --bg:    #F0EDE6; --bg2: #FFFFFF; --bg3: #E6E1D8; --bg4: #D8D2C8;
+      --gold:  #B07808; --gold2: #8C5F06; --gglow: rgba(176,120,8,.1);
+      --red:   #B82020; --rglow: rgba(184,32,32,.08);
+      --text:  #1C1814; --muted: rgba(28,24,20,.48); --line: rgba(28,24,20,.1);
+      --r: 16px; --r-sm: 10px;
+      --nav-h: 68px;
+    }
+    *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+    html { -webkit-tap-highlight-color:transparent; }
+    body { font-family:'Poppins',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; padding-bottom:var(--nav-h); }
+    button,input,select { font-family:'Poppins',sans-serif; }
+    button { cursor:pointer; border:none; background:none; }
+
+    /* ── ACTIVITY COLORS ── */
+    .ac-swim    { --ac:#1B7FBF; --ab:rgba(27,127,191,.12);  }
+    .ac-art     { --ac:#9B4DCA; --ab:rgba(155,77,202,.12);  }
+    .ac-martial { --ac:#E06820; --ab:rgba(224,104,32,.12);  }
+    .ac-mma     { --ac:#D63030; --ab:rgba(214,48,48,.12);   }
+    .ac-ballet  { --ac:#CC3D7A; --ab:rgba(204,61,122,.12);  }
+    .ac-story   { --ac:#1BA89A; --ab:rgba(27,168,154,.12);  }
+    .ac-explore { --ac:#4AB81B; --ab:rgba(74,184,27,.12);   }
+    .ac-sensory { --ac:#7AAB2A; --ab:rgba(122,171,42,.12);  }
+    .ac-drama   { --ac:#CC7A1B; --ab:rgba(204,122,27,.12);  }
+    .ac-dance   { --ac:#B91BAA; --ab:rgba(185,27,170,.12);  }
+    .ac-writing { --ac:#1BA89A; --ab:rgba(27,168,154,.12);  }
+    .ac-design  { --ac:#9B4DCA; --ab:rgba(155,77,202,.12);  }
+    .ac-free    { --ac:#666;    --ab:rgba(100,100,100,.09); }
+    .ac-shared  { --ac:var(--gold); --ab:var(--gglow);      }
+
+    /* ── HEADER ── */
+    #hd {
+      position:sticky; top:0; z-index:100;
+      background:rgba(240,237,230,.97); backdrop-filter:blur(20px);
+      border-bottom:1px solid var(--line);
+      padding:12px 18px;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .hd-l { display:flex; align-items:center; gap:10px; }
+    .hd-icon {
+      width:36px; height:36px; border-radius:50%; flex-shrink:0;
+      background:linear-gradient(135deg,#C02A2A,#8B1E1E);
+      display:flex; align-items:center; justify-content:center; font-size:1rem;
+    }
+    .hd-name { font-size:.9rem; font-weight:800; line-height:1.1; }
+    .hd-sub  { font-size:.54rem; font-weight:600; color:var(--muted); letter-spacing:.07em; text-transform:uppercase; }
+    #clock { font-size:1.1rem; font-weight:800; color:var(--gold); font-variant-numeric:tabular-nums; text-align:right; line-height:1.1; }
+    #cdate { font-size:.54rem; font-weight:600; color:var(--muted); text-align:right; letter-spacing:.05em; margin-top:1px; }
+
+    /* ── BOTTOM NAV ── */
+    #bnav {
+      position:fixed; bottom:0; left:0; right:0; z-index:100;
+      height:var(--nav-h);
+      background:rgba(240,237,230,.98); backdrop-filter:blur(20px);
+      border-top:1px solid var(--line);
+      display:flex;
+    }
+    .bnb {
+      flex:1; display:flex; flex-direction:column; align-items:center;
+      justify-content:center; gap:4px; padding:8px;
+      color:var(--muted); transition:color .2s;
+    }
+    .bnb.active { color:var(--gold); }
+    .bnb svg { width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+    .bnb span { font-size:.6rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
+
+    /* ── TAB PANELS ── */
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block; }
+
+    /* ── WEEK BANNER ── */
+    #week-banner {
+      background:linear-gradient(90deg, rgba(176,120,8,.12), rgba(176,120,8,.04));
+      border-bottom:1px solid rgba(176,120,8,.15);
+      padding:10px 18px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .wb-left { display:flex; align-items:center; gap:10px; }
+    .wb-num  { font-size:.54rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--gold); background:rgba(176,120,8,.15); padding:3px 9px; border-radius:999px; border:1px solid rgba(176,120,8,.25); flex-shrink:0; }
+    .wb-ar   { font-size:.95rem; font-weight:800; color:var(--text); }
+    .wb-theme{ font-size:.6rem; color:var(--muted); margin-top:1px; }
+    .wb-days { font-size:.58rem; color:var(--muted); text-align:right; flex-shrink:0; }
+
+    .thu-badge { display:inline-flex; align-items:center; gap:4px; font-size:.52rem; font-weight:800; padding:2px 8px; border-radius:999px; background:rgba(176,120,8,.14); color:var(--gold); border:1px solid rgba(176,120,8,.25); letter-spacing:.05em; text-transform:uppercase; margin-right:6px; vertical-align:middle; }
+
+    /* ── DAY TABS ── */
+    #dtabs {
+      display:flex; gap:7px; padding:12px 16px;
+      border-bottom:1px solid var(--line); background:var(--bg2);
+      overflow-x:auto;
+    }
+    #dtabs::-webkit-scrollbar { display:none; }
+    .dtab {
+      flex-shrink:0; padding:8px 18px; border-radius:999px;
+      font-size:.7rem; font-weight:700; letter-spacing:.04em;
+      background:var(--bg3); color:var(--muted); border:1px solid var(--line);
+      transition:all .2s; white-space:nowrap;
+    }
+    .dtab.today:not(.active) { border-color:rgba(176,120,8,.3); color:var(--gold); }
+    .dtab.active { background:var(--gold); color:#1A0A00; border-color:var(--gold); }
+
+    /* ── NOW STRIP ── */
+    #now {
+      margin:14px 16px;
+      background:var(--bg3); border:1px solid rgba(176,120,8,.2);
+      border-left:3px solid var(--gold); border-radius:var(--r);
+      padding:14px 16px;
+    }
+    .now-hd {
+      font-size:.56rem; font-weight:700; letter-spacing:.1em; color:var(--gold);
+      text-transform:uppercase; display:flex; align-items:center; gap:7px; margin-bottom:9px;
+    }
+    .pdot { width:7px; height:7px; border-radius:50%; background:var(--gold); animation:pd 2s ease-in-out infinite; }
+    @keyframes pd { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.35;transform:scale(1.6)} }
+    #now-range { font-size:.68rem; font-weight:600; color:var(--muted); margin-bottom:9px; }
+    .now-rows  { display:flex; flex-direction:column; gap:8px; }
+    .now-row   { display:flex; align-items:center; gap:9px; }
+    .ng { font-size:.58rem; font-weight:700; padding:3px 10px; border-radius:999px; flex-shrink:0; white-space:nowrap; }
+    .ng-l { background:rgba(176,120,8,.18); color:var(--gold); }
+    .ng-r { background:rgba(184,32,32,.18);  color:#B82020; }
+    .ng-f { background:rgba(27,127,191,.18); color:#1B6EAA; }
+    .now-act { font-size:.82rem; font-weight:600; }
+    .now-msg { font-size:.82rem; color:var(--muted); text-align:center; padding:2px; }
+
+    /* ── POOL STATUS ── */
+    #pools { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:0 16px 14px; }
+    .pc { background:var(--bg3); border:1px solid var(--line); border-radius:var(--r); padding:13px 14px; }
+    .pc-lbl   { font-size:.55rem; font-weight:700; letter-spacing:.1em; color:var(--muted); text-transform:uppercase; margin-bottom:7px; }
+    .pc-occ   { display:flex; align-items:center; gap:7px; font-size:.78rem; font-weight:700; }
+    .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .dot-busy { background:#1B7FBF; box-shadow:0 0 8px rgba(27,127,191,.6); }
+    .dot-free { background:#4AB81B; box-shadow:0 0 8px rgba(74,184,27,.5); }
+    .pc-until { font-size:.58rem; color:var(--muted); margin-top:4px; }
+
+    /* ── GROUP FILTER ── */
+    #gf { display:flex; gap:7px; padding:0 16px 13px; overflow-x:auto; }
+    #gf::-webkit-scrollbar { display:none; }
+    .gfb {
+      flex-shrink:0; padding:8px 15px; border-radius:999px;
+      font-size:.66rem; font-weight:600; background:var(--bg3);
+      color:var(--muted); border:1px solid var(--line);
+      transition:all .2s; white-space:nowrap;
+    }
+    .gfb.active              { background:var(--bg4); color:var(--text); border-color:rgba(28,24,20,.18); }
+    .gfb.gl.active { background:rgba(176,120,8,.14); color:var(--gold); border-color:rgba(176,120,8,.3);  }
+    .gfb.gr.active { background:rgba(184,32,32,.14);  color:#B82020;     border-color:rgba(184,32,32,.3);   }
+    .gfb.gf.active { background:rgba(27,127,191,.14); color:#1B6EAA;     border-color:rgba(27,127,191,.3);  }
+
+    /* ── SCHEDULE BLOCKS ── */
+    #sched { padding:0 16px 32px; }
+    .sched-theme { font-size:.64rem; font-weight:700; letter-spacing:.08em; color:var(--gold); text-transform:uppercase; margin-bottom:12px; }
+    .col-hds { display:grid; grid-template-columns:1fr 1fr 1fr; margin-bottom:7px; }
+    .chd { font-size:.58rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:0 13px; }
+    .chd-l{color:var(--gold)} .chd-r{color:#B82020} .chd-f{color:#1B6EAA}
+
+    .blk { margin-bottom:9px; border-radius:var(--r); overflow:hidden; border:1px solid var(--line); }
+    .blk.is-now  { border-color:var(--gold); box-shadow:0 0 0 1px var(--gold),0 6px 24px rgba(176,120,8,.1); }
+    .blk.is-past { opacity:.35; pointer-events:none; }
+
+    .blk-time {
+      display:flex; align-items:center; justify-content:space-between;
+      background:var(--bg2); padding:8px 14px;
+      font-size:.62rem; font-weight:700; color:var(--muted); letter-spacing:.04em;
+    }
+    .now-badge { background:var(--gold); color:#1A0A00; font-size:.54rem; font-weight:800; padding:2px 9px; border-radius:999px; letter-spacing:.06em; text-transform:uppercase; }
+
+    .blk-shared { display:flex; align-items:center; gap:11px; padding:14px; background:var(--bg3); }
+    .blk-shared.ac-shared { background:var(--ab); }
+    .bs-em { font-size:1.1rem; }
+    .bs-lbl { font-size:.88rem; font-weight:600; }
+
+    .blk-split { display:grid; background:var(--bg3); }
+    .blk-split.va { grid-template-columns:1fr 1fr 1fr; }
+    .blk-split.vs { grid-template-columns:1fr; }
+
+    .sc { padding:13px 12px; border-right:1px solid var(--line); }
+    .sc:last-child { border-right:none; }
+    .sc-grp { font-size:.52rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin-bottom:6px; opacity:.5; }
+    .sc-act { display:flex; align-items:center; gap:7px; margin-bottom:8px; }
+    .sc-em  { font-size:.95rem; line-height:1; flex-shrink:0; }
+    .sc-name { font-size:.8rem; font-weight:600; line-height:1.25; }
+
+    /* Coach chip */
+    .coach-chip {
+      display:flex; align-items:center; gap:6px;
+      background:var(--bg2); border:1px solid var(--line);
+      border-radius:999px; padding:5px 10px;
+      font-size:.66rem; font-weight:600; color:var(--muted);
+      cursor:pointer; transition:all .2s; margin-bottom:6px;
+      width:fit-content; max-width:100%;
+    }
+    .coach-chip:hover { border-color:var(--gold); color:var(--text); }
+    .coach-chip.assigned { background:rgba(176,120,8,.1); border-color:rgba(176,120,8,.3); color:var(--gold); }
+    .coach-chip .av { width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.55rem; font-weight:800; color:#fff; flex-shrink:0; }
+    .coach-chip .plus-ic { font-size:.7rem; opacity:.5; }
+
+    /* Volunteer chip */
+    .vol-chip {
+      display:inline-flex; align-items:center; gap:5px;
+      font-size:.58rem; font-weight:600; padding:3px 9px;
+      border-radius:999px; cursor:pointer;
+      background:var(--bg2); border:1px solid var(--line); color:var(--muted);
+      transition:all .2s;
+    }
+    .vol-chip:hover { border-color:rgba(255,255,255,.2); color:var(--text); }
+    .vol-chip.has-vols { background:rgba(74,184,27,.1); border-color:rgba(74,184,27,.25); color:#1A7A08; }
+
+    @media (max-width:520px) {
+      .blk-split.va { grid-template-columns:1fr; }
+      .col-hds { display:none; }
+      .sc { border-right:none; border-bottom:1px solid var(--line); }
+      .sc:last-child { border-bottom:none; }
+    }
+
+    /* ── TEAM TAB ── */
+    #tab-team { padding:0 0 20px; }
+    .team-section { padding:20px 16px 4px; }
+    .ts-hd {
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:14px;
+    }
+    .ts-title { font-size:.88rem; font-weight:800; }
+    .ts-count {
+      font-size:.62rem; font-weight:700; padding:3px 10px;
+      border-radius:999px; background:var(--bg3); color:var(--muted);
+      border:1px solid var(--line);
+    }
+    .btn-add {
+      display:flex; align-items:center; gap:6px;
+      padding:9px 16px; border-radius:999px;
+      background:var(--gold); color:#1A0A00;
+      font-size:.7rem; font-weight:700;
+      transition:all .18s;
+    }
+    .btn-add:hover { background:var(--gold2); }
+    .btn-add svg { width:14px; height:14px; stroke:#1A0A00; fill:none; stroke-width:2.5; stroke-linecap:round; }
+
+    .person-cards { display:flex; flex-direction:column; gap:9px; }
+    .person-card {
+      background:var(--bg2); border:1px solid var(--line);
+      border-radius:var(--r); padding:14px;
+      display:flex; align-items:center; gap:13px;
+      transition:border-color .2s;
+    }
+    .person-card:active { border-color:rgba(28,24,20,.2); }
+    .p-av {
+      width:42px; height:42px; border-radius:50%; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1rem; font-weight:800; color:#fff;
+    }
+    .p-info { flex:1; min-width:0; }
+    .p-name { font-size:.85rem; font-weight:700; line-height:1.2; }
+    .p-role { font-size:.64rem; color:var(--muted); margin-top:2px; }
+    .p-grp-badge {
+      font-size:.58rem; font-weight:700; padding:3px 9px;
+      border-radius:999px; flex-shrink:0;
+    }
+    .p-grp-badge.gl { background:rgba(176,120,8,.18); color:var(--gold); }
+    .p-grp-badge.gr { background:rgba(184,32,32,.18);  color:#B82020; }
+    .p-grp-badge.gf { background:rgba(27,127,191,.18); color:#1B6EAA; }
+    .p-grp-badge.gn { background:var(--bg3); color:var(--muted); border:1px solid var(--line); }
+    .p-action {
+      width:34px; height:34px; border-radius:50%;
+      background:var(--bg3); border:1px solid var(--line);
+      display:flex; align-items:center; justify-content:center;
+      color:var(--muted); font-size:.8rem; flex-shrink:0;
+      transition:all .18s;
+    }
+    .p-action:hover { border-color:rgba(28,24,20,.2); color:var(--text); }
+
+    .empty-state {
+      text-align:center; padding:36px 20px;
+      color:var(--muted); font-size:.82rem; line-height:1.75;
+    }
+    .empty-state .em-icon { font-size:2.4rem; margin-bottom:12px; }
+
+    .divider { height:1px; background:var(--line); margin:16px 16px 0; }
+
+    /* ── BOTTOM SHEET ── */
+    #sheet-bg {
+      position:fixed; inset:0; background:rgba(0,0,0,.6);
+      z-index:200; opacity:0; pointer-events:none; transition:opacity .3s;
+    }
+    #sheet-bg.open { opacity:1; pointer-events:all; }
+    #sheet {
+      position:fixed; bottom:0; left:0; right:0; z-index:201;
+      background:var(--bg3); border-radius:22px 22px 0 0;
+      border-top:1px solid rgba(28,24,20,.1);
+      transform:translateY(100%); transition:transform .32s cubic-bezier(.25,.46,.45,.94);
+      max-height:82vh; display:flex; flex-direction:column;
+    }
+    #sheet.open { transform:translateY(0); }
+    #sheet-handle { width:40px; height:4px; border-radius:2px; background:rgba(28,24,20,.18); margin:12px auto 0; flex-shrink:0; }
+    #sheet-body { overflow-y:auto; padding:16px 18px 40px; flex:1; }
+
+    .sheet-title { font-size:1rem; font-weight:800; margin-bottom:4px; }
+    .sheet-sub   { font-size:.72rem; color:var(--muted); margin-bottom:18px; }
+    .sheet-divider { height:1px; background:var(--line); margin:14px 0; }
+
+    /* Picker list */
+    .picker-list { display:flex; flex-direction:column; gap:8px; margin-top:6px; }
+    .picker-item {
+      display:flex; align-items:center; gap:13px;
+      background:var(--bg2); border:1px solid var(--line);
+      border-radius:var(--r-sm); padding:12px 14px;
+      cursor:pointer; transition:all .18s;
+    }
+    .picker-item:hover   { border-color:rgba(28,24,20,.18); }
+    .picker-item.selected { border-color:var(--gold); background:var(--gglow); }
+    .picker-item.busy    { opacity:.5; }
+    .pi-av { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.85rem; font-weight:800; color:#fff; flex-shrink:0; }
+    .pi-name { font-size:.82rem; font-weight:700; line-height:1.2; }
+    .pi-role { font-size:.62rem; color:var(--muted); margin-top:2px; }
+    .pi-busy-tag { font-size:.56rem; color:#B82020; font-weight:600; }
+    .pi-check { margin-left:auto; color:var(--gold); font-size:1rem; font-weight:900; }
+    .picker-empty { text-align:center; color:var(--muted); font-size:.82rem; padding:20px; line-height:1.7; }
+
+    /* Sheet form */
+    .sheet-form { display:flex; flex-direction:column; gap:13px; margin-top:6px; }
+    .sf-label { font-size:.62rem; font-weight:700; letter-spacing:.06em; color:var(--muted); text-transform:uppercase; margin-bottom:5px; }
+    .sf-input {
+      width:100%; background:var(--bg2); border:1px solid var(--line);
+      border-radius:var(--r-sm); padding:13px 14px;
+      font-size:.85rem; font-weight:500; color:var(--text);
+      outline:none; transition:border-color .2s;
+    }
+    .sf-input:focus { border-color:var(--gold); }
+    .sf-select {
+      width:100%; background:var(--bg2); border:1px solid var(--line);
+      border-radius:var(--r-sm); padding:13px 14px;
+      font-size:.85rem; font-weight:500; color:var(--text);
+      outline:none; appearance:none; cursor:pointer;
+    }
+    .sf-select:focus { border-color:var(--gold); }
+    .sheet-actions { display:flex; gap:10px; margin-top:4px; }
+    .btn-primary {
+      flex:1; padding:14px; border-radius:var(--r-sm);
+      background:var(--gold); color:#1A0A00;
+      font-size:.8rem; font-weight:800; letter-spacing:.03em;
+      transition:all .18s;
+    }
+    .btn-primary:hover { background:var(--gold2); }
+    .btn-secondary {
+      padding:14px 20px; border-radius:var(--r-sm);
+      background:var(--bg2); color:var(--muted);
+      font-size:.8rem; font-weight:700; border:1px solid var(--line);
+      transition:all .18s;
+    }
+    .btn-secondary:hover { color:var(--text); border-color:rgba(28,24,20,.2); }
+    .btn-danger {
+      flex:1; padding:14px; border-radius:var(--r-sm);
+      background:rgba(184,32,32,.15); color:#B82020;
+      font-size:.8rem; font-weight:700; border:1px solid rgba(184,32,32,.25);
+      transition:all .18s;
+    }
+    .btn-danger:hover { background:rgba(184,32,32,.25); }
+    .btn-unassign {
+      width:100%; padding:13px; border-radius:var(--r-sm);
+      background:rgba(184,32,32,.1); color:#B82020;
+      font-size:.76rem; font-weight:700; border:1px solid rgba(184,32,32,.2);
+      margin-bottom:14px; transition:all .18s;
+    }
+
+    /* ── VENUES TAB ── */
+    #tab-venues { padding:0 16px 32px; }
+    .venues-hd {
+      font-size:.56rem; font-weight:700; letter-spacing:.1em; color:var(--gold);
+      text-transform:uppercase; padding:16px 0 12px;
+    }
+    .venue-hours-banner {
+      background:var(--bg3); border:1px solid rgba(176,120,8,.2);
+      border-left:3px solid var(--gold); border-radius:var(--r);
+      padding:13px 16px; margin-bottom:14px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    .vhb-label { font-size:.56rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:.08em; margin-bottom:4px; }
+    .vhb-time  { font-size:.88rem; font-weight:800; }
+    .vhb-divider { width:1px; height:34px; background:var(--line); flex-shrink:0; }
+    .venue-card {
+      background:var(--bg2); border:1px solid var(--line);
+      border-radius:var(--r); padding:14px;
+      display:flex; align-items:flex-start; gap:13px; margin-bottom:9px;
+    }
+    .vc-icon {
+      width:44px; height:44px; border-radius:var(--r-sm); flex-shrink:0;
+      display:flex; align-items:center; justify-content:center; font-size:1.3rem;
+    }
+    .vc-body { flex:1; min-width:0; }
+    .vc-name { font-size:.88rem; font-weight:700; line-height:1.2; }
+    .vc-sub  { font-size:.62rem; color:var(--muted); margin-top:2px; }
+    .vc-note { font-size:.62rem; color:var(--muted); margin-top:7px; font-style:italic; line-height:1.5; }
+    .vc-status {
+      display:inline-flex; align-items:center; gap:5px;
+      font-size:.58rem; font-weight:700; padding:3px 9px;
+      border-radius:999px; margin-top:8px;
+    }
+    .vs-active  { background:rgba(74,184,27,.14);   color:#1A7A08;     border:1px solid rgba(74,184,27,.28);   }
+    .vs-watch   { background:rgba(27,127,191,.14);  color:#1B6EAA;     border:1px solid rgba(27,127,191,.28);  }
+    .vs-closed  { background:rgba(100,100,100,.1);  color:var(--muted);border:1px solid var(--line);           }
+    .vs-support { background:rgba(176,120,8,.1);   color:var(--gold); border:1px solid rgba(176,120,8,.22);  }
+    .vs-dot { width:6px; height:6px; border-radius:50%; background:currentColor; flex-shrink:0; }
+
+    /* ── REGISTRATIONS TAB ── */
+    #tab-registrations { padding:0 16px 32px; }
+    .regs-hd { display:flex; align-items:center; justify-content:space-between; padding:16px 0 4px; }
+    .regs-hd-lbl { font-size:.56rem; font-weight:700; letter-spacing:.1em; color:var(--gold); text-transform:uppercase; }
+    .regs-total { font-size:.62rem; font-weight:700; padding:2px 9px; border-radius:999px; background:rgba(176,120,8,.1); color:var(--gold); border:1px solid rgba(176,120,8,.2); }
+    .regs-filters { display:flex; gap:7px; padding:10px 0 14px; overflow-x:auto; }
+    .regs-filters::-webkit-scrollbar { display:none; }
+    .reg-card { background:var(--bg2); border:1px solid var(--line); border-radius:var(--r); padding:14px; margin-bottom:9px; }
+    .reg-card.reg-done { opacity:.5; }
+    .reg-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:9px; }
+    .reg-cname { font-size:.92rem; font-weight:800; line-height:1.2; }
+    .reg-meta  { display:flex; align-items:center; gap:6px; margin-top:4px; flex-wrap:wrap; }
+    .reg-age   { font-size:.6rem; color:var(--muted); font-weight:600; }
+    .reg-status-new      { background:rgba(184,32,32,.1);  color:var(--red);   border:1px solid rgba(184,32,32,.2);  font-size:.54rem; font-weight:700; padding:3px 8px; border-radius:999px; }
+    .reg-status-assigned { background:rgba(176,120,8,.1);  color:var(--gold);  border:1px solid rgba(176,120,8,.2);  font-size:.54rem; font-weight:700; padding:3px 8px; border-radius:999px; }
+    .reg-status-done     { background:rgba(34,140,10,.1);  color:#1A7A08;      border:1px solid rgba(34,140,10,.2);  font-size:.54rem; font-weight:700; padding:3px 8px; border-radius:999px; }
+    .reg-time    { font-size:.56rem; color:var(--muted); }
+    .reg-parent  { display:flex; align-items:center; gap:12px; flex-wrap:wrap; font-size:.74rem; color:var(--muted); margin-bottom:8px; }
+    .reg-phone   { color:var(--gold); font-weight:700; }
+    .reg-bus-row { font-size:.72rem; font-weight:600; padding:6px 10px; border-radius:var(--r-sm); background:var(--bg3); margin-bottom:10px; }
+    .reg-self    { color:var(--muted); }
+    .reg-actions { display:flex; gap:7px; }
+    .btn-reg-done { padding:9px 14px; border-radius:var(--r-sm); background:rgba(34,140,10,.1); color:#1A7A08; font-size:.72rem; font-weight:700; border:1px solid rgba(34,140,10,.2); font-family:'Poppins',sans-serif; transition:all .18s; flex-shrink:0; }
+    .btn-reg-done:hover { background:rgba(34,140,10,.2); }
+    .btn-reg-del  { padding:9px 12px; border-radius:var(--r-sm); background:var(--bg3); color:var(--muted); font-size:.82rem; font-weight:900; border:1px solid var(--line); font-family:'Poppins',sans-serif; transition:all .18s; flex-shrink:0; }
+    .btn-reg-del:hover  { background:rgba(184,32,32,.1); color:var(--red); border-color:rgba(184,32,32,.2); }
+
+    /* Pending registrations banner in Buses tab */
+    .pending-regs-banner {
+      background:rgba(184,32,32,.06); border:1px solid rgba(184,32,32,.15);
+      border-left:3px solid var(--red); border-radius:var(--r);
+      padding:12px 14px; margin-bottom:14px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .prb-left { display:flex; align-items:center; gap:10px; }
+    .prb-count { width:34px; height:34px; border-radius:50%; flex-shrink:0; background:rgba(184,32,32,.15); color:var(--red); display:flex; align-items:center; justify-content:center; font-size:.95rem; font-weight:900; }
+    .prb-title { font-size:.78rem; font-weight:700; }
+    .prb-sub   { font-size:.6rem; color:var(--muted); margin-top:2px; }
+    .prb-btn   { padding:8px 14px; border-radius:999px; background:var(--red); color:#fff; font-size:.66rem; font-weight:700; flex-shrink:0; font-family:'Poppins',sans-serif; transition:background .18s; }
+    .prb-btn:hover { opacity:.88; }
+
+    /* ── BUSES TAB ── */
+    #tab-buses { padding:0 16px 32px; }
+    .buses-hd {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 0 12px;
+    }
+    .buses-hd-lbl { font-size:.56rem; font-weight:700; letter-spacing:.1em; color:var(--gold); text-transform:uppercase; }
+    .bus-card {
+      background:var(--bg2); border:1px solid var(--line);
+      border-radius:var(--r); padding:14px 15px; margin-bottom:9px;
+      display:flex; align-items:center; gap:12px; cursor:pointer;
+      -webkit-tap-highlight-color:transparent; transition:border-color .2s;
+    }
+    .bus-card:active { border-color:rgba(28,24,20,.2); }
+    .bc-icon {
+      width:44px; height:44px; border-radius:var(--r-sm); flex-shrink:0;
+      background:rgba(176,120,8,.12);
+      display:flex; align-items:center; justify-content:center; font-size:1.3rem;
+    }
+    .bc-body { flex:1; min-width:0; }
+    .bc-name { font-size:.9rem; font-weight:700; line-height:1.2; }
+    .bc-loc  { font-size:.63rem; color:var(--muted); margin-top:2px; }
+    .bc-pills { display:flex; gap:6px; margin-top:9px; flex-wrap:wrap; }
+    .bc-pill {
+      display:flex; align-items:center; gap:4px;
+      font-size:.58rem; font-weight:700; padding:3px 8px;
+      border-radius:999px; background:var(--bg3);
+      color:var(--muted); border:1px solid var(--line);
+    }
+    .bc-pill.has { background:rgba(176,120,8,.1); color:var(--gold); border-color:rgba(176,120,8,.22); }
+    .bc-chevron { color:var(--muted); font-size:1.1rem; flex-shrink:0; opacity:.5; }
+
+    /* Bus detail sheet */
+    .bus-section-hd {
+      display:flex; align-items:center; justify-content:space-between;
+      margin:16px 0 10px;
+    }
+    .bus-section-title { font-size:.58rem; font-weight:700; letter-spacing:.09em; color:var(--muted); text-transform:uppercase; }
+    .bus-section-count {
+      font-size:.62rem; font-weight:700; padding:2px 9px;
+      border-radius:999px; background:var(--bg4); color:var(--muted); border:1px solid var(--line);
+    }
+    .bus-section-count.has { background:rgba(176,120,8,.12); color:var(--gold); border-color:rgba(176,120,8,.2); }
+    .kid-chips { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:9px; }
+    .kid-chip {
+      display:flex; align-items:center; gap:5px;
+      background:var(--bg3); border:1px solid var(--line);
+      border-radius:999px; padding:5px 10px 5px 7px;
+      font-size:.72rem; font-weight:600; color:var(--text);
+    }
+    .kid-chip-rm {
+      width:16px; height:16px; border-radius:50%;
+      background:rgba(184,32,32,.2); color:#B82020;
+      font-size:.72rem; font-weight:900; line-height:1;
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; flex-shrink:0; border:none;
+      transition:background .15s; margin-left:1px;
+    }
+    .kid-chip-rm:hover { background:rgba(184,32,32,.4); }
+    .add-kid-row { display:flex; gap:8px; margin-top:4px; }
+    .add-kid-row input {
+      flex:1; background:var(--bg2); border:1px solid var(--line);
+      border-radius:var(--r-sm); padding:10px 12px;
+      font-size:.82rem; font-weight:500; color:var(--text); outline:none;
+      font-family:'Poppins',sans-serif; transition:border-color .2s;
+    }
+    .add-kid-row input:focus { border-color:var(--gold); }
+    .btn-add-kid {
+      padding:10px 16px; border-radius:var(--r-sm);
+      background:var(--gold); color:#1A0A00;
+      font-size:.76rem; font-weight:800; flex-shrink:0;
+      transition:background .18s;
+    }
+    .btn-add-kid:hover { background:var(--gold2); }
+    .bus-team-list { display:flex; flex-direction:column; gap:7px; margin-bottom:9px; }
+    .bus-team-item {
+      display:flex; align-items:center; gap:10px;
+      background:var(--bg2); border:1px solid var(--line);
+      border-radius:var(--r-sm); padding:10px 12px;
+    }
+    .bus-team-item .bt-info { flex:1; min-width:0; }
+    .bus-team-item .bt-name { font-size:.8rem; font-weight:700; line-height:1.2; }
+    .bus-team-item .bt-role { font-size:.6rem; color:var(--muted); margin-top:1px; }
+    .bus-team-item .bt-rm {
+      width:28px; height:28px; border-radius:50%;
+      background:rgba(184,32,32,.1); color:#B82020;
+      font-size:.8rem; display:flex; align-items:center; justify-content:center;
+      cursor:pointer; border:none; flex-shrink:0; transition:background .15s;
+    }
+    .bus-team-item .bt-rm:hover { background:rgba(184,32,32,.25); }
+    .btn-assign {
+      width:100%; padding:11px; border-radius:var(--r-sm);
+      background:var(--bg2); border:1px solid var(--line);
+      color:var(--muted); font-size:.75rem; font-weight:700;
+      display:flex; align-items:center; justify-content:center; gap:7px;
+      font-family:'Poppins',sans-serif; transition:all .18s;
+    }
+    .btn-assign:hover { border-color:rgba(28,24,20,.2); color:var(--text); }
+    .btn-assign svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2.5; stroke-linecap:round; }
+
+    /* Vol group selector in sheet */
+    .grp-btns { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .grp-btn {
+      padding:12px 10px; border-radius:var(--r-sm);
+      font-size:.72rem; font-weight:700; text-align:center;
+      background:var(--bg2); color:var(--muted); border:1px solid var(--line);
+      transition:all .2s;
+    }
+    .grp-btn.active.gl { background:rgba(176,120,8,.14); color:var(--gold); border-color:rgba(176,120,8,.3); }
+    .grp-btn.active.gr { background:rgba(184,32,32,.14);  color:#B82020;    border-color:rgba(184,32,32,.3); }
+    .grp-btn.active.gf { background:rgba(27,127,191,.14); color:#1B6EAA;   border-color:rgba(27,127,191,.3); }
+    .grp-btn.active.gn { background:var(--bg4); color:var(--text); border-color:rgba(28,24,20,.2); }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="hd">
+  <div class="hd-l">
+    <div class="hd-icon">⭐</div>
+    <div>
+      <div class="hd-name">Najoom Ops</div>
+      <div class="hd-sub">Operations Dashboard &nbsp;·&nbsp; <a href="index.html" style="color:var(--gold);opacity:.75;text-decoration:none">Landing Page ↗</a></div>
+    </div>
+  </div>
+  <div>
+    <div id="clock">--:-- --</div>
+    <div id="cdate">---</div>
+  </div>
+</header>
+
+<!-- SCHEDULE TAB -->
+<div id="tab-schedule" class="tab-panel active">
+  <div id="week-banner" style="display:none"></div>
+  <div id="dtabs"></div>
+  <div id="now"></div>
+  <div id="pools"></div>
+  <div id="gf">
+    <button class="gfb active" data-g="all">All Groups</button>
+    <button class="gfb gl" data-g="little">🌟 Little Stars</button>
+    <button class="gfb gr" data-g="rising">⭐ Rising Stars</button>
+    <button class="gfb gf" data-g="future">🏆 Future Stars</button>
+  </div>
+  <div id="sched"></div>
+</div>
+
+<!-- TEAM TAB -->
+<div id="tab-team" class="tab-panel">
+  <div class="team-section">
+    <div class="ts-hd">
+      <div>
+        <div class="ts-title">Coaches</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="ts-count" id="coach-count">0 / 21</div>
+        <button class="btn-add" id="btn-add-coach">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Coach
+        </button>
+      </div>
+    </div>
+    <div id="coach-list" class="person-cards"></div>
+  </div>
+  <div class="divider"></div>
+  <div class="team-section">
+    <div class="ts-hd">
+      <div>
+        <div class="ts-title">Volunteers</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="ts-count" id="vol-count">0 / 42</div>
+        <button class="btn-add" id="btn-add-vol">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Volunteer
+        </button>
+      </div>
+    </div>
+    <div id="vol-list" class="person-cards"></div>
+  </div>
+</div>
+
+<!-- REGISTRATIONS TAB -->
+<div id="tab-registrations" class="tab-panel"></div>
+
+<!-- BUSES TAB -->
+<div id="tab-buses" class="tab-panel"></div>
+
+<!-- VENUES TAB -->
+<div id="tab-venues" class="tab-panel"></div>
+
+<!-- BOTTOM NAV -->
+<nav id="bnav">
+  <button class="bnb active" data-tab="schedule">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    <span>Schedule</span>
+  </button>
+  <button class="bnb" data-tab="team">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <span>Team</span>
+  </button>
+  <button class="bnb" data-tab="buses">
+    <svg viewBox="0 0 24 24"><rect x="1" y="6" width="22" height="13" rx="2"/><path d="M1 10h22"/><circle cx="7" cy="22" r="1.5"/><circle cx="17" cy="22" r="1.5"/><path d="M5 19v3M19 19v3"/></svg>
+    <span>Buses</span>
+  </button>
+  <button class="bnb" data-tab="registrations">
+    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    <span>Regs</span>
+  </button>
+  <button class="bnb" data-tab="venues">
+    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    <span>Places</span>
+  </button>
+</nav>
+
+<!-- SHEET -->
+<div id="sheet-bg"></div>
+<div id="sheet">
+  <div id="sheet-handle"></div>
+  <div id="sheet-body"></div>
+</div>
+
+<script>
+// ─── SCHEDULE DATA ────────────────────────────────────────────────────────────
+
+const A = {
+  swim_a:  {e:'🏊',n:'Pool A — Swim',       t:'ac-swim'   },
+  swim_b:  {e:'🏊',n:'Pool B — Swim',       t:'ac-swim'   },
+  art:     {e:'🎨',n:'Art & Crafts',        t:'ac-art'    },
+  martial: {e:'🥋',n:'Martial Arts',        t:'ac-martial'},
+  martial2:{e:'🥋',n:'Martial Arts ×2',     t:'ac-martial'},
+  mma:     {e:'🥊',n:'MMA / Boxing',        t:'ac-mma'    },
+  mma2:    {e:'🥊',n:'MMA Drills ×2',       t:'ac-mma'    },
+  drills:  {e:'🥊',n:'MMA Intro Drills',    t:'ac-mma'    },
+  ballet:  {e:'💃',n:'Ballet / Dance',      t:'ac-ballet' },
+  ballet2: {e:'💃',n:'Ballet Final',        t:'ac-ballet' },
+  dance:   {e:'💃',n:'Dance Workshop',      t:'ac-dance'  },
+  story:   {e:'📖',n:'Storytelling',        t:'ac-story'  },
+  explore: {e:'🔭',n:'Explore & Discover',  t:'ac-explore'},
+  explore2:{e:'🔭',n:'Exploration Lab',     t:'ac-explore'},
+  disco:   {e:'🔭',n:'Discovery Lab',       t:'ac-explore'},
+  sensory: {e:'🌿',n:'Sensory Play',        t:'ac-sensory'},
+  drama:   {e:'🎭',n:'Story Drama',         t:'ac-drama'  },
+  writing: {e:'✍️', n:'Creative Writing',   t:'ac-writing'},
+  design:  {e:'🎨',n:'Graffiti / Design',   t:'ac-design' },
+  sprint:  {e:'🎨',n:'Design Sprint',       t:'ac-design' },
+  chall:   {e:'🎨',n:'Design Challenge',    t:'ac-art'    },
+  art_des: {e:'🎨',n:'Art & Design',        t:'ac-art'    },
+  art_proj:{e:'🎨',n:'Art Project',         t:'ac-art'    },
+  free:    {e:'🎨',n:'Free Art / Play',     t:'ac-free'   },
+  art_free:{e:'🎨',n:'Free Art',            t:'ac-free'   },
+  assembly:{e:'⭐',n:'Morning Assembly',    t:'ac-shared' },
+  snack:   {e:'🍊',n:'Snack Break',         t:'ac-shared' },
+  lunch:   {e:'🍽️', n:'Lunch',             t:'ac-shared' },
+  wrapup:  {e:'✅',n:'Wrap-up + Dismissal', t:'ac-shared' },
+  wrapweek:{e:'🏆',n:'Week Wrap-up',        t:'ac-shared' },
+};
+
+const S = {
+  sunday:    {theme:'Swimming + Art & Crafts', blocks:[
+    {s:'7:30', e:'8:00',  sh:A.assembly},
+    {s:'8:00', e:'9:00',  l:A.art,     r:A.story,    f:A.explore  },
+    {s:'9:00', e:'9:15',  sh:A.snack},
+    {s:'9:15', e:'10:15', l:A.swim_a,  r:A.art,      f:A.swim_b   },
+    {s:'10:15',e:'11:15', l:A.ballet,  r:A.swim_a,   f:A.explore  },
+    {s:'11:15',e:'12:00', l:A.story,   r:A.martial,  f:A.art_des  },
+    {s:'12:00',e:'12:30', sh:A.lunch},
+    {s:'12:30',e:'13:15', l:A.free,    r:A.disco,    f:A.drills   },
+    {s:'13:15',e:'13:30', sh:A.wrapup},
+  ]},
+  monday:    {theme:'Martial Arts + Storytelling', blocks:[
+    {s:'7:30', e:'8:00',  sh:A.assembly},
+    {s:'8:00', e:'9:00',  l:A.ballet,  r:A.martial,  f:A.mma      },
+    {s:'9:00', e:'9:15',  sh:A.snack},
+    {s:'9:15', e:'10:15', l:A.story,   r:A.story,    f:A.explore  },
+    {s:'10:15',e:'11:15', l:A.art,     r:A.explore,  f:A.writing  },
+    {s:'11:15',e:'12:00', l:A.sensory, r:A.martial2, f:A.mma2     },
+    {s:'12:00',e:'12:30', sh:A.lunch},
+    {s:'12:30',e:'13:15', l:A.drama,   r:A.art,      f:A.design   },
+    {s:'13:15',e:'13:30', sh:A.wrapup},
+  ]},
+  tuesday:   {theme:'Swimming + Explore', blocks:[
+    {s:'7:30', e:'8:00',  sh:A.assembly},
+    {s:'8:00', e:'9:00',  l:A.explore, r:A.disco,    f:A.martial  },
+    {s:'9:00', e:'9:15',  sh:A.snack},
+    {s:'9:15', e:'10:15', l:A.swim_a,  r:A.art,      f:A.swim_b   },
+    {s:'10:15',e:'11:15', l:A.art,     r:A.swim_a,   f:A.explore  },
+    {s:'11:15',e:'12:00', l:A.ballet,  r:A.martial,  f:A.chall    },
+    {s:'12:00',e:'12:30', sh:A.lunch},
+    {s:'12:30',e:'13:15', l:A.story,   r:A.explore2, f:A.drills   },
+    {s:'13:15',e:'13:30', sh:A.wrapup},
+  ]},
+  wednesday: {theme:'MMA + Art & Crafts', blocks:[
+    {s:'7:30', e:'8:00',  sh:A.assembly},
+    {s:'8:00', e:'9:00',  l:A.art,     r:A.art,      f:A.mma      },
+    {s:'9:00', e:'9:15',  sh:A.snack},
+    {s:'9:15', e:'10:15', l:A.ballet,  r:A.martial,  f:A.design   },
+    {s:'10:15',e:'11:15', l:A.story,   r:A.explore,  f:A.explore  },
+    {s:'11:15',e:'12:00', l:A.sensory, r:A.writing,  f:A.mma2     },
+    {s:'12:00',e:'12:30', sh:A.lunch},
+    {s:'12:30',e:'13:15', l:A.art_free,r:A.art_proj, f:A.art_des  },
+    {s:'13:15',e:'13:30', sh:A.wrapup},
+  ]},
+  thursday:  {theme:'Swimming + Ballet / Dance', blocks:[
+    {s:'7:30', e:'8:00',  sh:A.assembly},
+    {s:'8:00', e:'9:00',  l:A.ballet,  r:A.disco,    f:A.art_des  },
+    {s:'9:00', e:'9:15',  sh:A.snack},
+    {s:'9:15', e:'10:15', l:A.swim_a,  r:A.dance,    f:A.swim_b   },
+    {s:'10:15',e:'11:15', l:A.ballet2, r:A.swim_a,   f:A.drills   },
+    {s:'11:15',e:'12:00', l:A.story,   r:A.martial,  f:A.explore  },
+    {s:'12:00',e:'12:30', sh:A.lunch},
+    {s:'12:30',e:'13:15', l:A.art,     r:A.story,    f:A.sprint   },
+    {s:'13:15',e:'13:30', sh:A.wrapweek},
+  ]},
+};
+
+const DAYS = ['sunday','monday','tuesday','wednesday','thursday'];
+const DLBL = {sunday:'Sun',monday:'Mon',tuesday:'Tue',wednesday:'Wed',thursday:'Thu'};
+const DFULL= {sunday:'Sunday',monday:'Monday',tuesday:'Tuesday',wednesday:'Wednesday',thursday:'Thursday'};
+
+// Camp runs June 14 – July 9, 2026  (4 weeks, Sun–Thu)
+const CAMP_WEEKS = [
+  { n:1, start:'2026-06-14', end:'2026-06-18', ar:'أنا نجم!',             en:'Week 1 — I\'m a Star!',           theme:'التعارف والانطلاق' },
+  { n:2, start:'2026-06-21', end:'2026-06-25', ar:'أتحدى نفسي!',          en:'Week 2 — I Challenge Myself!',    theme:'المغامرة والتحديات' },
+  { n:3, start:'2026-06-28', end:'2026-07-02', ar:'أبدع وأبتكر!',          en:'Week 3 — I Create & Innovate!',   theme:'الإبداع والفنون' },
+  { n:4, start:'2026-07-05', end:'2026-07-09', ar:'أنا نجم المستقبل!',    en:'Week 4 — Star of the Future!',    theme:'القيادة والختام الكبير' },
+];
+
+function currentCampWeek() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  return CAMP_WEEKS.find(w => {
+    const s = new Date(w.start), e = new Date(w.end); e.setHours(23,59,59);
+    return today >= s && today <= e;
+  }) || null;
+}
+const GNAMES= {little:'🌟 Little Stars',rising:'⭐ Rising Stars',future:'🏆 Future Stars',all:'All Groups'};
+const SPECS = ['Swimming','Martial Arts','MMA / Boxing','Ballet / Dance','Art & Crafts','Storytelling','Explore & Science','General'];
+
+const VENUES = [
+  { id:'football', e:'⚽', n:'Football Field No. 2',       sub:null,         note:null,                                                                      clr:'#4AB81B' },
+  { id:'tennis',   e:'🎾', n:'Tennis Courts No. 1, 2 & 5', sub:'3 courts',   note:null,                                                                      clr:'#C8B814' },
+  { id:'pools',    e:'🏊', n:'Outdoor Pools No. 1 & 2',    sub:'2 pools',    note:null,                                                                      clr:'#1B7FBF' },
+  { id:'tent',     e:'⛺', n:'Tent & Gathering Area',       sub:null,         note:null,                                                                      clr:'#E8A820' },
+  { id:'studio',   e:'🎨', n:'Studio No. 2',                sub:null,         note:null,                                                                      clr:'#9B4DCA' },
+  { id:'beach',    e:'🏐', n:'Beach Volleyball Court',      sub:null,         note:null,                                                                      clr:'#E06820' },
+  { id:'forest',   e:'🌲', n:'Forest Area',                 sub:null,         note:null,                                                                      clr:'#2A9B4D' },
+  { id:'bball',    e:'🏀', n:'Basketball Court',            sub:null,         note:'Not suitable for basketball — available as an additional support space',  clr:'#888'    },
+];
+
+// maps activity type → ideal specialty
+const SPEC_MATCH = {
+  'ac-swim':    'Swimming',
+  'ac-martial': 'Martial Arts',
+  'ac-mma':     'MMA / Boxing',
+  'ac-ballet':  'Ballet / Dance',
+  'ac-dance':   'Ballet / Dance',
+  'ac-art':     'Art & Crafts',
+  'ac-design':  'Art & Crafts',
+  'ac-story':   'Storytelling',
+  'ac-drama':   'Storytelling',
+  'ac-writing': 'Storytelling',
+  'ac-explore': 'Explore & Science',
+  'ac-sensory': 'Explore & Science',
+  'ac-free':    'General',
+};
+
+// ─── FIREBASE CONFIG ─────────────────────────────────────────────────────────
+// To enable live sync so your whole team sees the same data:
+//   1. Go to https://console.firebase.google.com → New project
+//   2. Realtime Database → Create database → Start in test mode
+//   3. Gear ⚙ → Project settings → Your apps → </> (Web) → Register app
+//   4. Copy the firebaseConfig block and paste the values below
+
+const FB_CONFIG = {
+  apiKey:            "AIzaSyBpxsRlKgkn4LhTkPC0eybroqD2llzuaGk",
+  authDomain:        "najoom-ops.firebaseapp.com",
+  databaseURL:       "https://najoom-ops-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:         "najoom-ops",
+  storageBucket:     "najoom-ops.firebasestorage.app",
+  messagingSenderId: "524263127749",
+  appId:             "1:524263127749:web:8b66a2d7f95da506feceac",
+};
+const FB_PATH = 'najoom';
+
+// ─── OPS PIN ─────────────────────────────────────────────────────────────────
+// Change this to your own PIN. Delete actions require it — viewing and adding do not.
+const OPS_PIN = '862861';
+
+function requirePin(onConfirm, label) {
+  openSheet(`
+    <div class="sheet-title">🔐 Admin Action</div>
+    <div class="sheet-sub" id="pin-sub">${label || 'Enter ops PIN to continue'}</div>
+    <div class="sheet-form" style="margin-top:10px">
+      <div>
+        <div class="sf-label">Ops PIN</div>
+        <input id="sf-pin" class="sf-input" type="password" inputmode="numeric"
+               maxlength="6" placeholder="••••" autocomplete="off"
+               style="letter-spacing:.4em;font-size:1.5rem;text-align:center;padding:16px">
+      </div>
+      <div class="sheet-actions">
+        <button class="btn-secondary" data-action="close-sheet">Cancel</button>
+        <button class="btn-danger" id="btn-pin-confirm">Confirm Delete</button>
+      </div>
+    </div>`);
+  setTimeout(() => {
+    const inp = document.getElementById('sf-pin');
+    const btn = document.getElementById('btn-pin-confirm');
+    inp?.focus();
+    const check = () => {
+      if (inp?.value === OPS_PIN) {
+        onConfirm();
+      } else {
+        if (inp) { inp.value = ''; inp.style.borderColor = 'var(--red)'; setTimeout(() => { inp.style.borderColor = ''; }, 1200); }
+        const sub = document.getElementById('pin-sub');
+        if (sub) { const orig = sub.textContent; sub.textContent = 'Wrong PIN — try again'; setTimeout(() => sub.textContent = orig, 1500); }
+      }
+    };
+    btn?.addEventListener('click', check);
+    inp?.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }, 80);
+}
+
+// ─── SHEET SYNC ──────────────────────────────────────────────────────────────
+// Auto-pulls Volunteer / Coach rows from the Google Sheet every 5 minutes.
+// ONE-TIME SETUP: open the sheet → Share → Anyone with the link → Viewer → Done.
+const SHEET_ID = '1Fzp_wWOwZv0W_Y1A6J9Zy-lmzyI_eIH5YV_SK1ZhXVc';
+
+function _fetchSheetTeam() {
+  const cb = '_njmSheetCb';
+  window[cb] = function(resp) {
+    try {
+      if (!resp || !resp.table || !resp.table.rows) return;
+      const toAr = s => s.replace(/[٠١٢٣٤٥٦٧٨٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+      const g = (row, i) => row.c[i] && row.c[i].v != null ? String(row.c[i].v).trim() : '';
+      let vc = false, cc = false;
+      resp.table.rows.forEach(row => {
+        const pname  = g(row, 1).toLowerCase();
+        const cname  = g(row, 2);
+        const phone  = toAr(g(row, 5)).replace(/[^\d+]/g, '');
+        const school = g(row, 7);
+        if (!cname) return;
+        if (pname === 'volunteer') {
+          if (!_C.vols.some(v => v.name.toLowerCase() === cname.toLowerCase())) {
+            _C.vols.push({ id:'sf_'+uid(), name:cname, group:null, phone:phone||null, school:school||null });
+            vc = true;
+          }
+        } else if (pname.startsWith('coach')) {
+          if (!_C.coaches.some(c => c.name.toLowerCase() === cname.toLowerCase())) {
+            _C.coaches.push({ id:'sf_'+uid(), name:cname, specialty:'General', group:null, phone:phone||null, school:school||null });
+            cc = true;
+          }
+        }
+      });
+      if (vc) _save('vols', _C.vols);
+      if (cc) _save('coaches', _C.coaches);
+      if (vc || cc) _refreshActiveTab();
+    } catch(_) {}
+    delete window[cb];
+  };
+  const s = document.createElement('script');
+  s.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:${cb}`;
+  s.onerror = () => { delete window[cb]; };
+  document.head.appendChild(s);
+  setTimeout(() => { delete window[cb]; try { s.remove(); } catch(_) {} }, 8000);
+}
+
+function _fetchSheetRegs() {
+  const cb = '_njmSheetRegsCb';
+  window[cb] = function(resp) {
+    try {
+      if (!resp || !resp.table || !resp.table.rows) return;
+      const toAr = s => s.replace(/[٠١٢٣٤٥٦٧٨٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+      const g = (row, i) => row.c[i] && row.c[i].v != null ? String(row.c[i].v).trim() : '';
+      let changed = false;
+      resp.table.rows.forEach(row => {
+        const pname = g(row, 1);
+        const cname = g(row, 2);
+        const pl    = pname.toLowerCase().trim();
+        if (!cname || pl === 'volunteer' || pl.startsWith('coach')) return;
+        const tsRaw = g(row, 0);
+        const cage  = g(row, 3);
+        const group = g(row, 4);
+        const phone = toAr(g(row, 5)).replace(/[^\d+]/g, '');
+        const email = g(row, 6);
+        const school= g(row, 7);
+        const sid   = 'sh_' + (tsRaw + cname).replace(/[^\w]/g, '').slice(0, 20);
+        if (_C.regs.some(r => r.id === sid)) return;
+        let ts = Date.now();
+        const dm = tsRaw.match(/Date\((\d+),(\d+),(\d+)/);
+        if (dm) ts = new Date(+dm[1], +dm[2], +dm[3]).getTime();
+        _C.regs.push({ id:sid, pname, cname, cage, group, phone:phone||null, email:email||null, school:school||null, status:'new', needsBus:false, busArea:null, ts });
+        changed = true;
+      });
+      if (changed) { _save('regs', _C.regs); _autoImportTeam(); _refreshActiveTab(); }
+    } catch(_) {}
+    delete window[cb];
+  };
+  const s = document.createElement('script');
+  s.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:${cb}`;
+  s.onerror = () => { delete window[cb]; };
+  document.head.appendChild(s);
+  setTimeout(() => { delete window[cb]; try { s.remove(); } catch(_) {} }, 8000);
+}
+
+// ─── STORAGE ─────────────────────────────────────────────────────────────────
+
+const _C = { coaches:[], vols:[], buses:[], kids:[], regs:[], ca:{} };
+let _db = null;
+
+// Volunteers who registered via the landing page
+const SEED_VOLS = [
+  { id:'sv_mkh', name:'Mohammad Al Khattab',   group:null, phone:'962798356799',  school:'IEC'                         },
+  { id:'sv_zr',  name:'Zaid Rahahleh',          group:null, phone:'797975004',     school:'Islamic Educational College' },
+  { id:'sv_mom', name:'Mohamed Omar Muwaqqat',  group:null, phone:'799183032',     school:'IEC Jamal Amman'             },
+  { id:'sv_am',  name:'Ahmad Murad',            group:null, phone:'792440000',     school:'IEC'                         },
+  { id:'sv_mko', name:'Mohammad Khair Obeid',   group:null, phone:'962790159910',  school:''                            },
+  { id:'sv_yi',  name:'Yousef Ikreyam',         group:null, phone:null,            school:''                            },
+];
+
+function _loadFromLS() {
+  _C.coaches = JSON.parse(localStorage.getItem('njm_coaches')       || '[]');
+  _C.vols    = JSON.parse(localStorage.getItem('njm_vols')          || '[]');
+  _C.buses   = JSON.parse(localStorage.getItem('njm_buses')         || '[]');
+  _C.kids    = JSON.parse(localStorage.getItem('njm_kids')          || '[]');
+  _C.regs    = JSON.parse(localStorage.getItem('njm_registrations') || '[]');
+  _C.ca      = JSON.parse(localStorage.getItem('njm_ca_obj')        || '{}');
+  // Seed volunteers — bump version key to re-run when new names are added
+  if (!localStorage.getItem('njm_seeded_v3')) {
+    const names = _C.vols.map(v => v.name.toLowerCase());
+    const toAdd = SEED_VOLS.filter(s => !names.includes(s.name.toLowerCase()));
+    if (toAdd.length) { _C.vols = [..._C.vols, ...toAdd]; localStorage.setItem('njm_vols', JSON.stringify(_C.vols)); }
+    localStorage.setItem('njm_seeded_v3', '1');
+  }
+  _autoImportTeam();
+}
+
+// Regs with pname "Volunteer" or "Coach/Coachs" auto-move to Team — never show in Registrations
+function _isVolReg(r)   { const p = (r.pname||'').toLowerCase().trim(); return p === 'volunteer'; }
+function _isCoachReg(r) { const p = (r.pname||'').toLowerCase().trim(); return p.startsWith('coach'); }
+function _isTeamReg(r)  { return _isVolReg(r) || _isCoachReg(r); }
+
+function _autoImportTeam() {
+  const pending = _C.regs.filter(r => _isTeamReg(r) && r.status !== 'confirmed');
+  if (!pending.length) return;
+
+  let volsChanged = false, coachesChanged = false;
+
+  pending.forEach(r => {
+    if (_isVolReg(r)) {
+      const exists = _C.vols.some(v => v.fromReg === r.id || v.name.toLowerCase() === r.cname.toLowerCase());
+      if (!exists) {
+        _C.vols.push({ id:'rv_'+r.id, name:r.cname, group:null, phone:r.phone||null, school:r.school||null, fromReg:r.id });
+        volsChanged = true;
+      }
+    } else {
+      const exists = _C.coaches.some(c => c.fromReg === r.id || c.name.toLowerCase() === r.cname.toLowerCase());
+      if (!exists) {
+        _C.coaches.push({ id:'rc_'+r.id, name:r.cname, specialty:'General', group:null, phone:r.phone||null, school:r.school||null, fromReg:r.id });
+        coachesChanged = true;
+      }
+    }
+  });
+
+  if (volsChanged)    _save('vols',    _C.vols);
+  if (coachesChanged) _save('coaches', _C.coaches);
+  _C.regs = _C.regs.map(r => _isTeamReg(r) ? {...r, status:'confirmed'} : r);
+  _save('regs', _C.regs);
+}
+
+function _save(key, val) {
+  _C[key] = val;
+  const lsKey = {coaches:'njm_coaches',vols:'njm_vols',buses:'njm_buses',kids:'njm_kids',regs:'njm_registrations',ca:'njm_ca_obj'}[key];
+  if (lsKey) localStorage.setItem(lsKey, JSON.stringify(val));
+  if (_db) _db.ref(`${FB_PATH}/${key}`).set(key === 'ca' ? val : JSON.stringify(val));
+}
+
+function getRegs()  { return _C.regs; }
+function saveRegs(v){ _save('regs', v); }
+
+function _refreshActiveTab() {
+  if (activeTab === 'schedule')       renderSched();
+  if (activeTab === 'team')           renderTeam();
+  if (activeTab === 'buses')          renderBuses();
+  if (activeTab === 'registrations')  renderRegistrations();
+}
+
+function _setupSync() {
+  _loadFromLS();
+  const hasFb = FB_CONFIG.apiKey && FB_CONFIG.databaseURL;
+  if (!hasFb) return;
+  try {
+    const app = firebase.initializeApp(FB_CONFIG);
+    _db = firebase.database(app);
+    ['coaches','vols','buses','kids','regs','ca'].forEach(key => {
+      _db.ref(`${FB_PATH}/${key}`).on('value', snap => {
+        const raw = snap.val();
+        if (raw !== null)
+          _C[key] = key === 'ca' ? raw : (JSON.parse(raw) || (key === 'ca' ? {} : []));
+        if (key === 'regs') _autoImportTeam();
+        _refreshActiveTab();
+      });
+    });
+    console.log('[Najoom] Firebase sync active');
+  } catch(e) { console.warn('[Najoom] Firebase error:', e); }
+}
+
+const LS = {
+  coaches:    () => _C.coaches,
+  volunteers: () => _C.vols,
+  saveCoaches:  v => _save('coaches', v),
+  saveVols:     v => _save('vols', v),
+  buses:        () => _C.buses,
+  kids:         () => _C.kids,
+  saveBuses:    v => _save('buses', v),
+  saveKids:     v => _save('kids', v),
+  getCA:  (d,i,g)   => _C.ca[`${d}_${i}_${g}`] || null,
+  setCA:  (d,i,g,v) => { const ca={..._C.ca}; if(v) ca[`${d}_${i}_${g}`]=v; else delete ca[`${d}_${i}_${g}`]; _save('ca',ca); },
+};
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+
+let activeTab = 'schedule';
+let activeDay = 'sunday';
+let activeGrp = 'all';
+
+function todayKey() {
+  const m = {0:'sunday',1:'monday',2:'tuesday',3:'wednesday',4:'thursday'};
+  return m[new Date().getDay()] || null;
+}
+
+// ─── TIME UTILS ──────────────────────────────────────────────────────────────
+
+function toM(t) {
+  const [h,m] = t.split(':').map(Number);
+  return (h < 7 ? h + 12 : h) * 60 + (m || 0);
+}
+function nowM() {
+  const n = new Date(); return n.getHours() * 60 + n.getMinutes();
+}
+function fmt(t) {
+  const mins = toM(t), h = Math.floor(mins/60), m = mins%60;
+  const ap = h >= 12 ? 'PM' : 'AM', h12 = h > 12 ? h-12 : h === 0 ? 12 : h;
+  return `${h12}:${String(m).padStart(2,'0')} ${ap}`;
+}
+function curIdx(dk) {
+  const d = S[dk]; if (!d) return -1;
+  const now = nowM();
+  return d.blocks.findIndex(b => now >= toM(b.s) && now < toM(b.e));
+}
+
+// ─── AVATAR ──────────────────────────────────────────────────────────────────
+
+const AV_COLORS = ['#C02A2A','#1B7FBF','#4AB81B','#CC3D7A','#E06820','#9B4DCA','#1BA89A','#CC7A1B','#B91BAA'];
+function avColor(name) {
+  let h = 0; for (const c of name) h = (h*31 + c.charCodeAt(0)) % AV_COLORS.length;
+  return AV_COLORS[h];
+}
+function avHTML(name, size=36) {
+  const col = avColor(name), letter = (name||'?').charAt(0).toUpperCase();
+  return `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${col};display:flex;align-items:center;justify-content:center;font-size:${size*.38}px;font-weight:800;color:#fff;flex-shrink:0">${letter}</div>`;
+}
+
+// ─── CLOCK ───────────────────────────────────────────────────────────────────
+
+function tickClock() {
+  const n = new Date();
+  let h = n.getHours(), m = n.getMinutes();
+  const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12;
+  document.getElementById('clock').textContent = `${h}:${String(m).padStart(2,'0')} ${ap}`;
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  document.getElementById('cdate').textContent = `${days[n.getDay()]} · June ${n.getDate()}`;
+}
+
+// ─── RENDER: SCHEDULE TAB ────────────────────────────────────────────────────
+
+function renderDayTabs() {
+  const today = todayKey();
+  document.getElementById('dtabs').innerHTML = DAYS.map(d => {
+    let c = 'dtab';
+    if (d === activeDay) c += ' active';
+    if (d === today)     c += ' today';
+    const lbl = d === 'thursday' ? `${DLBL[d]} 🏆` : DLBL[d];
+    return `<button class="${c}" data-day="${d}">${lbl}</button>`;
+  }).join('');
+
+  // Week banner
+  const wb = document.getElementById('week-banner');
+  const wk = currentCampWeek();
+  if (wk) {
+    const s = new Date(wk.start), e = new Date(wk.end);
+    const fmt = d => d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+    wb.style.display = 'flex';
+    wb.innerHTML = `
+      <div class="wb-left">
+        <div class="wb-num">Week ${wk.n}</div>
+        <div>
+          <div class="wb-ar">${wk.ar}</div>
+          <div class="wb-theme">${wk.theme}</div>
+        </div>
+      </div>
+      <div class="wb-days">${fmt(s)} – ${fmt(e)}</div>`;
+  } else {
+    wb.style.display = 'none';
+  }
+}
+
+function renderNow() {
+  const isToday = activeDay === todayKey();
+  const el = document.getElementById('now');
+
+  if (!isToday) {
+    el.innerHTML = `<div class="now-hd"><div class="pdot"></div>Right Now</div><div class="now-msg">Viewing ${DFULL[activeDay]}</div>`;
+    return;
+  }
+
+  const idx = curIdx(activeDay);
+  let rangeHTML = '', bodyHTML = '';
+
+  if (idx === -1) {
+    const now = nowM();
+    const first = S[activeDay].blocks[0], last = S[activeDay].blocks[S[activeDay].blocks.length-1];
+    bodyHTML = `<div class="now-msg">${now < toM(first.s) ? 'Camp opens at 7:30 AM' : now >= toM(last.e) ? 'Camp has ended for today' : 'Outside camp hours'}</div>`;
+  } else {
+    const b = S[activeDay].blocks[idx];
+    rangeHTML = `<div id="now-range">${fmt(b.s)} – ${fmt(b.e)}</div>`;
+    if (b.sh) {
+      bodyHTML = `<div class="now-msg">${b.sh.e} ${b.sh.n} — All Groups</div>`;
+    } else {
+      bodyHTML = `<div class="now-rows">` + [
+        {key:'l',cls:'ng-l',lbl:'Little Stars',act:b.l},
+        {key:'r',cls:'ng-r',lbl:'Rising Stars', act:b.r},
+        {key:'f',cls:'ng-f',lbl:'Future Stars', act:b.f},
+      ].map(x=>`<div class="now-row"><span class="ng ${x.cls}">${x.lbl}</span><span class="now-act">${x.act.e} ${x.act.n}</span></div>`).join('') + `</div>`;
+    }
+  }
+
+  el.innerHTML = `<div class="now-hd"><div class="pdot"></div>Right Now</div>${rangeHTML}<div id="now-body">${bodyHTML}</div>`;
+}
+
+function renderPools() {
+  const isToday = activeDay === todayKey();
+  const now = nowM();
+  let pA = null, pB = null;
+
+  if (isToday) {
+    for (const b of S[activeDay].blocks) {
+      if (b.sh) continue;
+      const s = toM(b.s), e = toM(b.e);
+      if (now < s || now >= e) continue;
+      if (b.l?.t === 'ac-swim') { (b.l === A.swim_a ? (pA={g:GNAMES.little,u:fmt(b.e)}) : (pB={g:GNAMES.little,u:fmt(b.e)})); }
+      if (b.r?.t === 'ac-swim') { (b.r === A.swim_a ? (pA={g:GNAMES.rising,u:fmt(b.e)}) : (pB={g:GNAMES.rising,u:fmt(b.e)})); }
+      if (b.f?.t === 'ac-swim') { (b.f === A.swim_b || b.f === A.swim ? (pB={g:GNAMES.future,u:fmt(b.e)}) : (pA={g:GNAMES.future,u:fmt(b.e)})); }
+    }
+  }
+
+  function pc(data) {
+    return data
+      ? `<div class="pc-occ"><div class="dot dot-busy"></div><span>${data.g}</span></div><div class="pc-until">Until ${data.u}</div>`
+      : `<div class="pc-occ"><div class="dot dot-free"></div><span>Available</span></div><div class="pc-until"></div>`;
+  }
+
+  document.getElementById('pools').innerHTML = `
+    <div class="pc"><div class="pc-lbl">Pool A</div>${pc(pA)}</div>
+    <div class="pc"><div class="pc-lbl">Pool B</div>${pc(pB)}</div>`;
+}
+
+function renderSched() {
+  const d = S[activeDay];
+  const now = nowM(), isToday = activeDay === todayKey(), ci = isToday ? curIdx(activeDay) : -1;
+  let html = `<div class="sched-theme">${DFULL[activeDay]} · ${d.theme}</div>`;
+
+  if (activeGrp === 'all') {
+    html += `<div class="col-hds"><div class="chd chd-l">🌟 Little Stars</div><div class="chd chd-r">⭐ Rising Stars</div><div class="chd chd-f">🏆 Future Stars</div></div>`;
+  }
+
+  d.blocks.forEach((b, i) => {
+    const isNow  = i === ci;
+    const isPast = isToday && !isNow && now >= toM(b.e);
+    const cls    = `blk${isNow?' is-now':''}${isPast?' is-past':''}`;
+    const tl     = `${fmt(b.s)} – ${fmt(b.e)}`;
+
+    const isThuCeremony = activeDay === 'thursday' && b.sh === A.wrapweek;
+    const thuBadge = isThuCeremony ? `<span class="thu-badge">⭐ Star of the Week</span>` : '';
+    html += `<div class="${cls}"><div class="blk-time"><span>${tl}</span>${thuBadge}${isNow?'<span class="now-badge">Now</span>':''}</div>`;
+
+    if (b.sh) {
+      html += `<div class="blk-shared ${b.sh.t}"><span class="bs-em">${b.sh.e}</span><span class="bs-lbl">${b.sh.n}</span></div>`;
+    } else {
+      const vc = activeGrp === 'all' ? 'va' : 'vs';
+      html += `<div class="blk-split ${vc}">`;
+
+      const groups = activeGrp === 'all'
+        ? [{k:'l',lbl:'Little Stars'},{k:'r',lbl:'Rising Stars'},{k:'f',lbl:'Future Stars'}]
+        : [{k:activeGrp, lbl: GNAMES[activeGrp === 'little'?'little':activeGrp === 'rising'?'rising':'future'].replace(/[🌟⭐🏆] /,'')}];
+
+      const gmap = {l:b.l, r:b.r, f:b.f};
+
+      groups.forEach(({k, lbl}) => {
+        const act = gmap[k]; if (!act) return;
+        const coachId = LS.getCA(activeDay, i, k);
+        const coaches = LS.coaches();
+        const coach   = coaches.find(c => c.id === coachId);
+
+        // Volunteers assigned to this group
+        const vols = LS.volunteers().filter(v => v.group === (k === 'l' ? 'little' : k === 'r' ? 'rising' : 'future'));
+        const volCount = vols.length;
+
+        const coachChip = coach
+          ? `<button class="coach-chip assigned" data-action="pick-coach" data-day="${activeDay}" data-bi="${i}" data-gk="${k}">
+               ${avHTML(coach.name, 18)}
+               <span>${coach.name}</span>
+             </button>`
+          : `<button class="coach-chip" data-action="pick-coach" data-day="${activeDay}" data-bi="${i}" data-gk="${k}">
+               <span class="plus-ic">+</span>
+               <span>Assign Coach</span>
+             </button>`;
+
+        const volChip = `<button class="vol-chip${volCount ? ' has-vols' : ''}" data-action="view-vols" data-grp="${k === 'l' ? 'little' : k === 'r' ? 'rising' : 'future'}">
+          👥 ${volCount ? `${volCount} volunteer${volCount>1?'s':''}` : 'No volunteers'}
+        </button>`;
+
+        html += `<div class="sc ${act.t}">
+          <div class="sc-grp">${lbl}</div>
+          <div class="sc-act"><span class="sc-em">${act.e}</span><span class="sc-name">${act.n}</span></div>
+          ${coachChip}
+          ${volChip}
+        </div>`;
+      });
+      html += `</div>`;
+    }
+    html += `</div>`;
+  });
+
+  document.getElementById('sched').innerHTML = html;
+
+  if (isToday && ci !== -1) {
+    const blks = document.querySelectorAll('.blk');
+    if (blks[ci]) setTimeout(() => blks[ci].scrollIntoView({behavior:'smooth',block:'center'}), 100);
+  }
+}
+
+// ─── RENDER: TEAM TAB ────────────────────────────────────────────────────────
+
+function renderTeam() {
+  const coaches = LS.coaches(), vols = LS.volunteers();
+  document.getElementById('coach-count').textContent = `${coaches.length} / 21`;
+  document.getElementById('vol-count').textContent   = `${vols.length} / 42`;
+
+  // Coaches
+  const cl = document.getElementById('coach-list');
+  if (coaches.length === 0) {
+    cl.innerHTML = `<div class="empty-state"><div class="em-icon">🎽</div>No coaches added yet.<br>Tap <strong>Add Coach</strong> to build your roster.</div>`;
+  } else {
+    const grpCls = {little:'gl',rising:'gr',future:'gf'};
+    cl.innerHTML = coaches.map(c => {
+      const grpBadge = c.group
+        ? `<span class="p-grp-badge ${grpCls[c.group]||'gn'}">${GNAMES[c.group]}</span>`
+        : `<span class="p-grp-badge gn">Flexible</span>`;
+      return `<div class="person-card" data-action="edit-coach" data-id="${c.id}">
+        ${avHTML(c.name, 42)}
+        <div class="p-info">
+          <div class="p-name">${c.name}</div>
+          <div class="p-role">${c.phone ? `<a href="tel:${c.phone}" style="color:var(--gold);text-decoration:none">📞 ${c.phone}</a>` : c.specialty}</div>
+          ${c.phone ? `<div style="font-size:.58rem;color:var(--muted);margin-top:1px">${c.specialty}</div>` : ''}
+        </div>
+        ${grpBadge}
+      </div>`;
+    }).join('');
+  }
+
+  // Volunteers
+  const grpCls  = {little:'gl',rising:'gr',future:'gf'};
+  const vl = document.getElementById('vol-list');
+  if (vols.length === 0) {
+    vl.innerHTML = `<div class="empty-state"><div class="em-icon">🙋</div>No volunteers added yet.<br>Tap <strong>Add Volunteer</strong> to start.</div>`;
+  } else {
+    vl.innerHTML = vols.map(v => {
+      const grp = v.group;
+      const badge = grp
+        ? `<span class="p-grp-badge ${grpCls[grp]||'gn'}">${GNAMES[grp]}</span>`
+        : `<span class="p-grp-badge gn">Unassigned</span>`;
+      return `<div class="person-card" data-action="edit-vol" data-id="${v.id}">
+        ${avHTML(v.name, 42)}
+        <div class="p-info">
+          <div class="p-name">${v.name}</div>
+          <div class="p-role">${v.phone ? `<a href="tel:${v.phone}" style="color:var(--gold);text-decoration:none">📞 ${v.phone}</a>` : (grp ? GNAMES[grp] : 'No group assigned')}</div>
+          ${v.phone && grp ? `<div style="font-size:.58rem;color:var(--muted);margin-top:1px">${GNAMES[grp]}</div>` : ''}
+        </div>
+        ${badge}
+      </div>`;
+    }).join('');
+  }
+}
+
+// ─── UTILS ───────────────────────────────────────────────────────────────────
+
+function areasMatch(busLocation, regArea) {
+  if (!busLocation || !regArea) return false;
+  const a = busLocation.toLowerCase(), b = regArea.toLowerCase();
+  const aw = a.split(/[\s/,\-]+/), bw = b.split(/[\s/,\-]+/);
+  return aw.some(w => w.length >= 4 && b.includes(w)) ||
+         bw.some(w => w.length >= 4 && a.includes(w));
+}
+
+function timeAgo(ts) {
+  const d = Date.now() - ts, m = Math.floor(d/60000), h = Math.floor(m/60), dy = Math.floor(h/24);
+  if (dy > 0) return dy + 'd ago';
+  if (h  > 0) return h  + 'h ago';
+  if (m  > 0) return m  + 'm ago';
+  return 'Just now';
+}
+
+// ─── RENDER: REGISTRATIONS TAB ───────────────────────────────────────────────
+
+let activeRegFilter = 'all';
+
+function renderRegistrations() {
+  const all = getRegs()
+    .filter(r => !_isTeamReg(r))
+    .sort((a, b) => b.ts - a.ts);
+  const newCount      = all.filter(r => r.status === 'new').length;
+  const assignedCount = all.filter(r => r.status === 'assigned').length;
+  const doneCount     = all.filter(r => r.status === 'confirmed').length;
+  const filtered = activeRegFilter === 'all' ? all : all.filter(r => r.status === activeRegFilter);
+
+  const filterBtns = [
+    {k:'all',      lbl:`All (${all.length})`},
+    {k:'new',      lbl:`🔴 New (${newCount})`},
+    {k:'assigned', lbl:`Assigned (${assignedCount})`},
+    {k:'confirmed',lbl:`✓ Done (${doneCount})`},
+  ].map(f => `<button class="gfb${activeRegFilter===f.k?' active':''}" data-rf="${f.k}">${f.lbl}</button>`).join('');
+
+  let html = `
+    <div class="regs-hd">
+      <span class="regs-hd-lbl">Registrations</span>
+      <span class="regs-total">${all.length}</span>
+    </div>
+    <div class="regs-filters">${filterBtns}</div>
+  `;
+
+  if (filtered.length === 0) {
+    html += `<div class="empty-state"><div class="em-icon">📋</div>${activeRegFilter==='all'?'No registrations yet.<br>They appear here once parents fill the landing page form.':'No registrations in this category.'}</div>`;
+  } else {
+    html += filtered.map(r => regCardHTML(r)).join('');
+  }
+
+  document.getElementById('tab-registrations').innerHTML = html;
+
+  document.querySelectorAll('#tab-registrations [data-rf]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeRegFilter = btn.dataset.rf;
+      renderRegistrations();
+    });
+  });
+}
+
+function regCardHTML(r) {
+  const grpMap = {'4-6':'little','7-10':'rising','11-14':'future'};
+  const grpKey = grpMap[r.group] || 'little';
+  const grpCls = {little:'gl',rising:'gr',future:'gf'}[grpKey];
+  const statusHTML =
+    r.status === 'new'       ? `<span class="reg-status-new">New</span>`
+    : r.status === 'assigned'? `<span class="reg-status-assigned">Assigned</span>`
+    :                          `<span class="reg-status-done">✓ Done</span>`;
+  const busRow = r.needsBus
+    ? `<div class="reg-bus-row">🚌 ${r.busArea}</div>`
+    : `<div class="reg-bus-row reg-self">🚗 Self drop-off</div>`;
+
+  return `
+    <div class="reg-card${r.status==='confirmed'?' reg-done':''}">
+      <div class="reg-card-top">
+        <div>
+          <div class="reg-cname">${r.cname}</div>
+          <div class="reg-meta">
+            <span class="p-grp-badge ${grpCls}" style="font-size:.54rem">${GNAMES[grpKey]}</span>
+            ${r.cage ? `<span class="reg-age">${r.cage} yrs</span>` : ''}
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
+          ${statusHTML}
+          <span class="reg-time">${timeAgo(r.ts)}</span>
+        </div>
+      </div>
+      <div class="reg-parent">
+        <span>👤 ${r.pname}</span>
+        ${r.phone?`<a href="tel:${r.phone}" class="reg-phone">📞 ${r.phone}</a>`:''}
+      </div>
+      ${busRow}
+      <div class="reg-actions">
+        ${r.needsBus && r.status!=='confirmed' ? `<button class="btn-assign" data-action="reg-assign-bus" data-id="${r.id}" style="flex:1">🚌 Assign Bus</button>` : ''}
+        ${r.status!=='confirmed' ? `<button class="btn-reg-done" data-action="reg-confirm" data-id="${r.id}">✓ Done</button>` : ''}
+        <button class="btn-reg-del" data-action="reg-delete" data-id="${r.id}">×</button>
+      </div>
+    </div>`;
+}
+
+function sheetRegBusPicker(regId) {
+  const regs = getRegs();
+  const reg  = regs.find(r => r.id === regId);
+  if (!reg) return;
+  const buses = LS.buses();
+  if (buses.length === 0) {
+    openSheet(`<div class="sheet-title">Assign Bus</div><div class="picker-empty">No buses yet.<br>Go to Buses tab → Add Bus first.</div>`);
+    return;
+  }
+  const sorted = [...buses].sort((a, b) => areasMatch(b.location, reg.busArea) - areasMatch(a.location, reg.busArea));
+  const items  = sorted.map(bus => {
+    const match  = areasMatch(bus.location, reg.busArea);
+    const kCount = LS.kids().filter(k => k.busId === bus.id).length;
+    return `<div class="picker-item" data-action="do-reg-assign-bus" data-regid="${reg.id}" data-bus="${bus.id}">
+      <div style="width:36px;height:36px;border-radius:var(--r-sm);background:rgba(176,120,8,.12);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">🚌</div>
+      <div style="flex:1;min-width:0">
+        <div class="pi-name">${bus.name}</div>
+        <div class="pi-role" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+          📍 ${bus.location} · ${kCount} kid${kCount!==1?'s':''}
+          ${match?'<span style="font-size:.52rem;font-weight:700;color:var(--gold);background:rgba(176,120,8,.1);padding:2px 6px;border-radius:999px;border:1px solid rgba(176,120,8,.2)">⭐ Area Match</span>':''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  openSheet(`
+    <div class="sheet-title">Assign to Bus</div>
+    <div class="sheet-sub">${reg.cname} · 📍 ${reg.busArea || 'No area specified'}</div>
+    <div class="picker-list">${items}</div>`);
+}
+
+// ─── RENDER: BUSES TAB ───────────────────────────────────────────────────────
+
+function renderBuses() {
+  const buses       = LS.buses();
+  const allRegs     = getRegs();
+  const pendingBus  = allRegs.filter(r => r.needsBus && r.status === 'new');
+
+  let html = `
+    <div class="buses-hd">
+      <span class="buses-hd-lbl">Bus Roster</span>
+      <button class="btn-add" id="btn-add-bus" style="font-size:.68rem;padding:8px 14px">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Bus
+      </button>
+    </div>
+  `;
+
+  if (pendingBus.length > 0) {
+    html += `
+      <div class="pending-regs-banner">
+        <div class="prb-left">
+          <div class="prb-count">${pendingBus.length}</div>
+          <div>
+            <div class="prb-title">Kids waiting for bus assignment</div>
+            <div class="prb-sub">Registered via landing page — need a bus</div>
+          </div>
+        </div>
+        <button class="prb-btn" data-action="go-to-regs">View →</button>
+      </div>`;
+  }
+
+  if (buses.length === 0) {
+    html += `<div class="empty-state"><div class="em-icon">🚌</div>No buses added yet.<br>Tap <strong>Add Bus</strong> to get started.</div>`;
+  } else {
+    const coaches = LS.coaches(), vols = LS.volunteers(), kids = LS.kids();
+    buses.forEach(bus => {
+      const kc = kids.filter(k => k.busId === bus.id).length;
+      const cc = coaches.filter(c => c.busId === bus.id).length;
+      const vc = vols.filter(v => v.busId === bus.id).length;
+      const pending = pendingBus.filter(r => areasMatch(bus.location, r.busArea)).length;
+      html += `
+        <div class="bus-card" data-action="open-bus" data-id="${bus.id}">
+          <div class="bc-icon">🚌</div>
+          <div class="bc-body">
+            <div class="bc-name">${bus.name}</div>
+            <div class="bc-loc">📍 ${bus.location}</div>
+            <div class="bc-pills">
+              <div class="bc-pill${kc?' has':''}">👶 ${kc} kid${kc!==1?'s':''}</div>
+              <div class="bc-pill${cc?' has':''}">🎽 ${cc} coach${cc!==1?'es':''}</div>
+              <div class="bc-pill${vc?' has':''}">🙋 ${vc} vol${vc!==1?'s':''}</div>
+              ${pending?`<div class="bc-pill has" style="background:rgba(184,32,32,.1);color:var(--red);border-color:rgba(184,32,32,.2)">🔴 ${pending} pending</div>`:''}
+            </div>
+          </div>
+          <div class="bc-chevron">›</div>
+        </div>`;
+    });
+  }
+
+  document.getElementById('tab-buses').innerHTML = html;
+  document.getElementById('btn-add-bus')?.addEventListener('click', sheetAddBus);
+}
+
+function sheetAddBus() {
+  openSheet(`
+    <div class="sheet-title">Add Bus</div>
+    <div class="sheet-sub">Create a new bus route</div>
+    <div class="sheet-form">
+      <div>
+        <div class="sf-label">Bus Name / Number</div>
+        <input id="sf-busname" class="sf-input" placeholder="e.g. Bus 1, Blue Bus" autocomplete="off">
+      </div>
+      <div>
+        <div class="sf-label">Drop-off Location</div>
+        <input id="sf-busloc" class="sf-input" placeholder="e.g. Al-Abdali, Sweifieh" autocomplete="off">
+      </div>
+      <div class="sheet-actions">
+        <button class="btn-secondary" data-action="close-sheet">Cancel</button>
+        <button class="btn-primary"   data-action="do-add-bus">Add Bus</button>
+      </div>
+    </div>`);
+  setTimeout(() => document.getElementById('sf-busname')?.focus(), 100);
+}
+
+function sheetBusDetail(busId) {
+  const bus = LS.buses().find(b => b.id === busId);
+  if (!bus) return;
+  const kids    = LS.kids().filter(k => k.busId === busId);
+  const coaches = LS.coaches().filter(c => c.busId === busId);
+  const vols    = LS.volunteers().filter(v => v.busId === busId);
+
+  const kidChips = kids.length
+    ? `<div class="kid-chips">${kids.map(k =>
+        `<div class="kid-chip">${avHTML(k.name,18)}<span>${k.name}</span>
+         <button class="kid-chip-rm" data-action="rm-kid" data-id="${k.id}" data-bus="${busId}">×</button></div>`
+      ).join('')}</div>`
+    : `<div style="font-size:.75rem;color:var(--muted);margin-bottom:9px">No kids assigned yet</div>`;
+
+  const coachItems = coaches.length
+    ? `<div class="bus-team-list">${coaches.map(c =>
+        `<div class="bus-team-item">${avHTML(c.name,32)}
+         <div class="bt-info"><div class="bt-name">${c.name}</div><div class="bt-role">${c.specialty}</div></div>
+         <button class="bt-rm" data-action="rm-bus-coach" data-id="${c.id}" data-bus="${busId}">×</button></div>`
+      ).join('')}</div>`
+    : `<div style="font-size:.75rem;color:var(--muted);margin-bottom:9px">No coaches assigned yet</div>`;
+
+  const volItems = vols.length
+    ? `<div class="bus-team-list">${vols.map(v =>
+        `<div class="bus-team-item">${avHTML(v.name,32)}
+         <div class="bt-info"><div class="bt-name">${v.name}</div><div class="bt-role">${v.group?GNAMES[v.group]:'No group'}</div></div>
+         <button class="bt-rm" data-action="rm-bus-vol" data-id="${v.id}" data-bus="${busId}">×</button></div>`
+      ).join('')}</div>`
+    : `<div style="font-size:.75rem;color:var(--muted);margin-bottom:9px">No volunteers assigned yet</div>`;
+
+  openSheet(`
+    <div class="sheet-title">${bus.name}</div>
+    <div class="sheet-sub">📍 ${bus.location}</div>
+    <button class="btn-unassign" data-action="do-del-bus" data-id="${busId}">Delete Bus</button>
+    <div class="sheet-divider"></div>
+
+    <div class="bus-section-hd">
+      <span class="bus-section-title">Kids</span>
+      <span class="bus-section-count${kids.length?' has':''}">${kids.length}</span>
+    </div>
+    ${kidChips}
+    <div class="add-kid-row">
+      <input id="sf-kidname" placeholder="Add kid by name…" autocomplete="off">
+      <button class="btn-add-kid" data-action="do-add-kid" data-bus="${busId}">Add</button>
+    </div>
+    <div class="sheet-divider"></div>
+
+    <div class="bus-section-hd">
+      <span class="bus-section-title">Coaches</span>
+      <span class="bus-section-count${coaches.length?' has':''}">${coaches.length}</span>
+    </div>
+    ${coachItems}
+    <button class="btn-assign" data-action="pick-bus-coach" data-bus="${busId}">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Assign Coach to this Bus
+    </button>
+    <div class="sheet-divider"></div>
+
+    <div class="bus-section-hd">
+      <span class="bus-section-title">Volunteers</span>
+      <span class="bus-section-count${vols.length?' has':''}">${vols.length}</span>
+    </div>
+    ${volItems}
+    <button class="btn-assign" data-action="pick-bus-vol" data-bus="${busId}">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Assign Volunteer to this Bus
+    </button>
+    ${(() => {
+      const allRegs     = getRegs();
+      const matchingRegs = allRegs.filter(r => r.needsBus && r.status === 'new' && areasMatch(bus.location, r.busArea));
+      if (matchingRegs.length === 0) return '';
+      const grpMap = {'4-6':'little','7-10':'rising','11-14':'future'};
+      return `
+        <div class="sheet-divider"></div>
+        <div class="bus-section-hd">
+          <span class="bus-section-title">Pending from this Area</span>
+          <span class="bus-section-count has">${matchingRegs.length}</span>
+        </div>
+        <div class="bus-team-list">${matchingRegs.map(r => {
+          const grpKey = grpMap[r.group] || 'little';
+          return `<div class="bus-team-item">
+            ${avHTML(r.cname, 32)}
+            <div class="bt-info">
+              <div class="bt-name">${r.cname}</div>
+              <div class="bt-role">${r.cage?r.cage+' yrs · ':''}${GNAMES[grpKey]||''} · ${r.pname}</div>
+            </div>
+            <button class="btn-add-kid" data-action="reg-quick-add" data-regid="${r.id}" data-bus="${busId}" style="padding:6px 12px;font-size:.68rem">Add</button>
+          </div>`;
+        }).join('')}</div>`;
+    })()}
+  `);
+  setTimeout(() => document.getElementById('sf-kidname')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.querySelector('[data-action="do-add-kid"]')?.click();
+  }), 50);
+}
+
+function sheetBusCoachPicker(busId) {
+  const bus  = LS.buses().find(b => b.id === busId);
+  const all  = LS.coaches();
+  if (all.length === 0) {
+    openSheet(`<div class="sheet-title">Assign Coach</div>
+      <div class="picker-empty">No coaches in roster yet.<br>Go to Team tab → Add Coach first.</div>`);
+    return;
+  }
+  const items = all.map(c => {
+    const isOn    = c.busId === busId;
+    const onOther = c.busId && c.busId !== busId;
+    const otherBus = onOther ? LS.buses().find(b => b.id === c.busId) : null;
+    return `<div class="picker-item ${isOn?'selected':''}"
+        data-action="do-bus-coach" data-id="${c.id}" data-bus="${busId}">
+        ${avHTML(c.name,36)}
+        <div style="flex:1;min-width:0">
+          <div class="pi-name">${c.name}</div>
+          <div class="pi-role" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+            ${c.specialty}
+            ${onOther?`<span style="color:#B82020;font-size:.54rem">· On ${otherBus?otherBus.name:'another bus'}</span>`:''}
+          </div>
+        </div>
+        ${isOn?'<div class="pi-check">✓</div>':''}
+      </div>`;
+  }).join('');
+  openSheet(`
+    <div class="sheet-title">Assign Coach</div>
+    <div class="sheet-sub">${bus?.name} · 📍 ${bus?.location}</div>
+    <div class="picker-list">${items}</div>`);
+}
+
+function sheetBusVolPicker(busId) {
+  const bus = LS.buses().find(b => b.id === busId);
+  const all = LS.volunteers();
+  if (all.length === 0) {
+    openSheet(`<div class="sheet-title">Assign Volunteer</div>
+      <div class="picker-empty">No volunteers in roster yet.<br>Go to Team tab → Add Volunteer first.</div>`);
+    return;
+  }
+  const items = all.map(v => {
+    const isOn    = v.busId === busId;
+    const onOther = v.busId && v.busId !== busId;
+    const otherBus = onOther ? LS.buses().find(b => b.id === v.busId) : null;
+    return `<div class="picker-item ${isOn?'selected':''}"
+        data-action="do-bus-vol" data-id="${v.id}" data-bus="${busId}">
+        ${avHTML(v.name,36)}
+        <div style="flex:1;min-width:0">
+          <div class="pi-name">${v.name}</div>
+          <div class="pi-role" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+            ${v.group?GNAMES[v.group]:'No group'}
+            ${onOther?`<span style="color:#B82020;font-size:.54rem">· On ${otherBus?otherBus.name:'another bus'}</span>`:''}
+          </div>
+        </div>
+        ${isOn?'<div class="pi-check">✓</div>':''}
+      </div>`;
+  }).join('');
+  openSheet(`
+    <div class="sheet-title">Assign Volunteer</div>
+    <div class="sheet-sub">${bus?.name} · 📍 ${bus?.location}</div>
+    <div class="picker-list">${items}</div>`);
+}
+
+// ─── RENDER: VENUES TAB ──────────────────────────────────────────────────────
+
+function renderVenues() {
+  const now = nowM();
+  const A_S = 7*60+30, A_E = 13*60+30, W_E = 16*60;
+
+  let stCls, stLbl;
+  if      (now < A_S) { stCls = 'vs-closed'; stLbl = 'Closed';     }
+  else if (now < A_E) { stCls = 'vs-active'; stLbl = 'Active';     }
+  else if (now < W_E) { stCls = 'vs-watch';  stLbl = 'Watch Only'; }
+  else                { stCls = 'vs-closed'; stLbl = 'Closed';     }
+
+  let html = `
+    <div class="venues-hd">Permitted Venues</div>
+    <div class="venue-hours-banner">
+      <div>
+        <div class="vhb-label">Activities</div>
+        <div class="vhb-time">7:30 AM – 1:30 PM</div>
+      </div>
+      <div class="vhb-divider"></div>
+      <div>
+        <div class="vhb-label">Watching</div>
+        <div class="vhb-time">Until 4:00 PM</div>
+      </div>
+    </div>
+  `;
+
+  VENUES.forEach(v => {
+    const isSupport = v.id === 'bball';
+    const badge = isSupport
+      ? `<div class="vc-status vs-support"><div class="vs-dot"></div>Support Space</div>`
+      : `<div class="vc-status ${stCls}"><div class="vs-dot"></div>${stLbl}</div>`;
+    html += `
+      <div class="venue-card">
+        <div class="vc-icon" style="background:${v.clr}22">${v.e}</div>
+        <div class="vc-body">
+          <div class="vc-name">${v.n}</div>
+          ${v.sub  ? `<div class="vc-sub">${v.sub}</div>`       : ''}
+          ${badge}
+          ${v.note ? `<div class="vc-note">⚠ ${v.note}</div>` : ''}
+        </div>
+      </div>
+    `;
+  });
+
+  document.getElementById('tab-venues').innerHTML = html;
+}
+
+// ─── BOTTOM SHEET ────────────────────────────────────────────────────────────
+
+function openSheet(html) {
+  document.getElementById('sheet-body').innerHTML = html;
+  document.getElementById('sheet').classList.add('open');
+  document.getElementById('sheet-bg').classList.add('open');
+}
+function closeSheet() {
+  document.getElementById('sheet').classList.remove('open');
+  document.getElementById('sheet-bg').classList.remove('open');
+}
+
+function sheetPickCoach(d, bi, gk) {
+  const coaches  = LS.coaches();
+  const current  = LS.getCA(d, bi, gk);
+  const block    = S[d].blocks[bi];
+  const act      = block[gk];
+  const busy     = new Set(['l','r','f'].filter(g=>g!==gk).map(g=>LS.getCA(d,bi,g)).filter(Boolean));
+  const grpName  = gk==='l'?GNAMES.little:gk==='r'?GNAMES.rising:GNAMES.future;
+  const grpKey   = gk==='l'?'little':gk==='r'?'rising':'future';
+  const idealSpec= act ? SPEC_MATCH[act.t] : null;
+
+  if (coaches.length === 0) {
+    openSheet(`
+      <div class="sheet-title">Assign Coach</div>
+      <div class="sheet-sub">${fmt(block.s)} – ${fmt(block.e)} · ${grpName}</div>
+      <div class="picker-empty">No coaches in roster yet.<br>Go to Team tab → Add Coach first.</div>`);
+    return;
+  }
+
+  // Sort: group+spec match first, then group only, then others, busy last
+  function rank(c) {
+    if (busy.has(c.id)) return 3;
+    const grpMatch  = c.group === grpKey || !c.group;
+    const specMatch = c.specialty === idealSpec;
+    if (grpMatch && specMatch) return 0;
+    if (grpMatch)              return 1;
+    return 2;
+  }
+  const sorted = [...coaches].sort((a,b) => rank(a) - rank(b));
+
+  function itemHTML(c) {
+    const r         = rank(c);
+    const isBusy    = r === 3;
+    const isGrp     = c.group === grpKey;
+    const isSpec    = c.specialty === idealSpec;
+    const isCurrent = c.id === current;
+
+    let tag = '';
+    if (!isBusy) {
+      if (isGrp && isSpec) tag = `<span style="font-size:.56rem;font-weight:700;color:var(--gold);background:var(--gglow);border:1px solid rgba(176,120,8,.25);padding:2px 7px;border-radius:999px;white-space:nowrap">⭐ Best Match</span>`;
+      else if (isGrp)      tag = `<span style="font-size:.56rem;font-weight:700;color:#1B6EAA;background:rgba(27,127,191,.12);border:1px solid rgba(27,127,191,.25);padding:2px 7px;border-radius:999px;white-space:nowrap">Group Match</span>`;
+      else if (isSpec)     tag = `<span style="font-size:.56rem;font-weight:700;color:#1A7A08;background:rgba(74,184,27,.1);border:1px solid rgba(74,184,27,.22);padding:2px 7px;border-radius:999px;white-space:nowrap">Skill Match</span>`;
+    }
+    const busyTag = isBusy ? `<span class="pi-busy-tag">· Busy this slot</span>` : '';
+
+    return `<div class="picker-item ${isCurrent?'selected':''} ${isBusy?'busy':''}"
+        data-action="do-assign-coach" data-id="${c.id}" data-day="${d}" data-bi="${bi}" data-gk="${gk}">
+        ${avHTML(c.name, 36)}
+        <div style="flex:1;min-width:0">
+          <div class="pi-name">${c.name}</div>
+          <div class="pi-role" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">${c.specialty} ${busyTag} ${tag}</div>
+        </div>
+        ${isCurrent?'<div class="pi-check">✓</div>':''}
+      </div>`;
+  }
+
+  openSheet(`
+    <div class="sheet-title">Assign Coach</div>
+    <div class="sheet-sub">${fmt(block.s)} – ${fmt(block.e)} · ${grpName}${idealSpec ? ` · Ideal: ${idealSpec}` : ''}</div>
+    ${current ? `<button class="btn-unassign" data-action="do-assign-coach" data-id="" data-day="${d}" data-bi="${bi}" data-gk="${gk}">Remove Assignment</button>` : ''}
+    <div class="picker-list">${sorted.map(itemHTML).join('')}</div>`);
+}
+
+function sheetViewVols(grp) {
+  const vols = LS.volunteers().filter(v => v.group === grp);
+  const items = vols.length === 0
+    ? `<div class="picker-empty">No volunteers assigned to ${GNAMES[grp]} yet.<br>Go to Team tab → Add Volunteer.</div>`
+    : vols.map(v => `
+        <div class="picker-item" style="pointer-events:none">
+          ${avHTML(v.name, 36)}
+          <div><div class="pi-name">${v.name}</div></div>
+        </div>`).join('');
+  openSheet(`
+    <div class="sheet-title">${GNAMES[grp]}</div>
+    <div class="sheet-sub">${vols.length} volunteer${vols.length!==1?'s':''} assigned</div>
+    <div class="picker-list">${items}</div>`);
+}
+
+function sheetAddCoach() {
+  openSheet(`
+    <div class="sheet-title">Add Coach</div>
+    <div class="sheet-sub">Add to your coaching roster</div>
+    <div class="sheet-form">
+      <div>
+        <div class="sf-label">Full Name</div>
+        <input id="sf-name" class="sf-input" placeholder="e.g. Ahmad Khalil" autocomplete="off">
+      </div>
+      <div>
+        <div class="sf-label">Best Skill</div>
+        <select id="sf-spec" class="sf-select">
+          ${SPECS.map(s=>`<option value="${s}">${s}</option>`).join('')}
+        </select>
+      </div>
+      <div>
+        <div class="sf-label">Assign to Group</div>
+        <div class="grp-btns" id="grp-sel">
+          <button class="grp-btn gl" data-grp="little">🌟 Little Stars</button>
+          <button class="grp-btn gr" data-grp="rising">⭐ Rising Stars</button>
+          <button class="grp-btn gf" data-grp="future">🏆 Future Stars</button>
+          <button class="grp-btn gn active" data-grp="">Flexible</button>
+        </div>
+      </div>
+      <div class="sheet-actions">
+        <button class="btn-secondary" data-action="close-sheet">Cancel</button>
+        <button class="btn-primary"   data-action="do-add-coach">Add Coach</button>
+      </div>
+    </div>`);
+  setTimeout(() => document.getElementById('sf-name')?.focus(), 100);
+}
+
+function sheetEditCoach(id) {
+  const c = LS.coaches().find(x=>x.id===id);
+  if (!c) return;
+  openSheet(`
+    <div class="sheet-title">Edit Coach</div>
+    <div class="sheet-sub">${c.name}</div>
+    <div class="sheet-form">
+      <div>
+        <div class="sf-label">Full Name</div>
+        <input id="sf-name" class="sf-input" value="${c.name}" autocomplete="off">
+      </div>
+      <div>
+        <div class="sf-label">Best Skill</div>
+        <select id="sf-spec" class="sf-select">
+          ${SPECS.map(s=>`<option value="${s}" ${s===c.specialty?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+      <div>
+        <div class="sf-label">Assign to Group</div>
+        <div class="grp-btns" id="grp-sel">
+          <button class="grp-btn gl ${c.group==='little'?'active':''}" data-grp="little">🌟 Little Stars</button>
+          <button class="grp-btn gr ${c.group==='rising'?'active':''}" data-grp="rising">⭐ Rising Stars</button>
+          <button class="grp-btn gf ${c.group==='future'?'active':''}" data-grp="future">🏆 Future Stars</button>
+          <button class="grp-btn gn ${!c.group?'active':''}" data-grp="">Flexible</button>
+        </div>
+      </div>
+      <div class="sheet-actions">
+        <button class="btn-danger" data-action="do-del-coach" data-id="${id}">Delete</button>
+        <button class="btn-primary" data-action="do-edit-coach" data-id="${id}">Save</button>
+      </div>
+    </div>`);
+}
+
+function sheetAddVol() {
+  openSheet(`
+    <div class="sheet-title">Add Volunteer</div>
+    <div class="sheet-sub">Add to your volunteer roster</div>
+    <div class="sheet-form">
+      <div>
+        <div class="sf-label">Full Name</div>
+        <input id="sf-name" class="sf-input" placeholder="e.g. Sara Al-Nouri" autocomplete="off">
+      </div>
+      <div>
+        <div class="sf-label">Assign to Group</div>
+        <div class="grp-btns" id="grp-sel">
+          <button class="grp-btn gn active" data-grp="">Unassigned</button>
+          <button class="grp-btn gl" data-grp="little">🌟 Little Stars</button>
+          <button class="grp-btn gr" data-grp="rising">⭐ Rising Stars</button>
+          <button class="grp-btn gf" data-grp="future">🏆 Future Stars</button>
+        </div>
+      </div>
+      <div class="sheet-actions">
+        <button class="btn-secondary" data-action="close-sheet">Cancel</button>
+        <button class="btn-primary"   data-action="do-add-vol">Add Volunteer</button>
+      </div>
+    </div>`);
+  setTimeout(() => document.getElementById('sf-name')?.focus(), 100);
+}
+
+function sheetEditVol(id) {
+  const v = LS.volunteers().find(x=>x.id===id);
+  if (!v) return;
+  openSheet(`
+    <div class="sheet-title">Edit Volunteer</div>
+    <div class="sheet-sub">${v.name}</div>
+    <div class="sheet-form">
+      <div>
+        <div class="sf-label">Full Name</div>
+        <input id="sf-name" class="sf-input" value="${v.name}" autocomplete="off">
+      </div>
+      <div>
+        <div class="sf-label">Assign to Group</div>
+        <div class="grp-btns" id="grp-sel">
+          <button class="grp-btn gn ${!v.group?'active':''}" data-grp="">Unassigned</button>
+          <button class="grp-btn gl ${v.group==='little'?'active':''}" data-grp="little">🌟 Little Stars</button>
+          <button class="grp-btn gr ${v.group==='rising'?'active':''}" data-grp="rising">⭐ Rising Stars</button>
+          <button class="grp-btn gf ${v.group==='future'?'active':''}" data-grp="future">🏆 Future Stars</button>
+        </div>
+      </div>
+      <div class="sheet-actions">
+        <button class="btn-danger"   data-action="do-del-vol"  data-id="${id}">Delete</button>
+        <button class="btn-primary"  data-action="do-edit-vol" data-id="${id}">Save</button>
+      </div>
+    </div>`);
+}
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+
+function selectedGrp() {
+  const active = document.querySelector('#grp-sel .grp-btn.active');
+  return active ? active.dataset.grp : '';
+}
+
+// ─── EVENTS ──────────────────────────────────────────────────────────────────
+
+// Bottom nav
+document.getElementById('bnav').addEventListener('click', e => {
+  const btn = e.target.closest('[data-tab]');
+  if (!btn) return;
+  activeTab = btn.dataset.tab;
+  document.querySelectorAll('.bnb').forEach(b => b.classList.toggle('active', b.dataset.tab === activeTab));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-'+activeTab));
+  if (activeTab === 'team')          renderTeam();
+  if (activeTab === 'buses')         renderBuses();
+  if (activeTab === 'registrations') renderRegistrations();
+  if (activeTab === 'venues')        renderVenues();
+});
+
+// Day tabs
+document.getElementById('dtabs').addEventListener('click', e => {
+  const b = e.target.closest('[data-day]');
+  if (!b) return;
+  activeDay = b.dataset.day;
+  renderDayTabs(); renderNow(); renderPools(); renderSched();
+});
+
+// Group filter
+document.getElementById('gf').addEventListener('click', e => {
+  const b = e.target.closest('[data-g]');
+  if (!b) return;
+  activeGrp = b.dataset.g;
+  document.querySelectorAll('.gfb').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  renderSched();
+});
+
+// Schedule actions (delegated)
+document.getElementById('sched').addEventListener('click', e => {
+  const el = e.target.closest('[data-action]');
+  if (!el) return;
+  const {action, day: d, bi, gk, grp} = el.dataset;
+  if (action === 'pick-coach') sheetPickCoach(d, +bi, gk);
+  if (action === 'view-vols')  sheetViewVols(grp);
+});
+
+// Team tab buttons
+document.getElementById('btn-add-coach').addEventListener('click', sheetAddCoach);
+document.getElementById('btn-add-vol').addEventListener('click',   sheetAddVol);
+
+document.getElementById('coach-list').addEventListener('click', e => {
+  const el = e.target.closest('[data-action="edit-coach"]');
+  if (!el) return;
+  sheetEditCoach(el.dataset.id);
+});
+document.getElementById('vol-list').addEventListener('click', e => {
+  const el = e.target.closest('[data-action="edit-vol"]');
+  if (!el) return;
+  sheetEditVol(el.dataset.id);
+});
+
+// Buses tab (delegated — content is re-rendered)
+document.getElementById('tab-buses').addEventListener('click', e => {
+  const el = e.target.closest('[data-action]');
+  if (!el) return;
+  if (el.dataset.action === 'open-bus') sheetBusDetail(el.dataset.id);
+  if (el.dataset.action === 'go-to-regs') {
+    activeTab = 'registrations';
+    document.querySelectorAll('.bnb').forEach(b => b.classList.toggle('active', b.dataset.tab === 'registrations'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-registrations'));
+    renderRegistrations();
+  }
+});
+
+// Registrations tab (delegated)
+document.getElementById('tab-registrations').addEventListener('click', e => {
+  const el = e.target.closest('[data-action]');
+  if (!el) return;
+  const {action, id} = el.dataset;
+  if (action === 'reg-assign-bus') sheetRegBusPicker(id);
+  if (action === 'reg-confirm') {
+    saveRegs(getRegs().map(r => r.id===id ? {...r, status:'confirmed'} : r));
+    renderRegistrations();
+  }
+  if (action === 'reg-delete') {
+    const regName = getRegs().find(r=>r.id===id)?.cname || 'registration';
+    requirePin(() => { saveRegs(getRegs().filter(r => r.id!==id)); renderRegistrations(); }, `Delete registration for ${regName}?`);
+  }
+});
+
+// Sheet overlay close
+document.getElementById('sheet-bg').addEventListener('click', closeSheet);
+
+// Sheet actions (delegated)
+document.getElementById('sheet-body').addEventListener('click', e => {
+  // Group selector buttons have no data-action — handle before the early return
+  const grpBtn = e.target.closest('.grp-btn');
+  if (grpBtn) {
+    document.querySelectorAll('#grp-sel .grp-btn').forEach(b => b.classList.remove('active'));
+    grpBtn.classList.add('active');
+    return;
+  }
+
+  const el = e.target.closest('[data-action]');
+  if (!el) return;
+  const {action, id, day: d, bi, gk, grp} = el.dataset;
+
+  if (action === 'close-sheet') return closeSheet();
+
+  if (action === 'do-assign-coach') {
+    LS.setCA(d, +bi, gk, id || null);
+    closeSheet(); renderSched();
+    return;
+  }
+
+  if (action === 'do-add-coach') {
+    const name  = document.getElementById('sf-name')?.value.trim();
+    const spec  = document.getElementById('sf-spec')?.value;
+    const group = selectedGrp() || null;
+    if (!name) { document.getElementById('sf-name')?.focus(); return; }
+    const list = LS.coaches();
+    list.push({id: uid(), name, specialty: spec, group});
+    LS.saveCoaches(list);
+    closeSheet(); renderTeam();
+    return;
+  }
+
+  if (action === 'do-edit-coach') {
+    const name  = document.getElementById('sf-name')?.value.trim();
+    const spec  = document.getElementById('sf-spec')?.value;
+    const group = selectedGrp() || null;
+    if (!name) return;
+    const list = LS.coaches();
+    const idx  = list.findIndex(x=>x.id===id);
+    if (idx !== -1) { list[idx].name = name; list[idx].specialty = spec; list[idx].group = group; LS.saveCoaches(list); }
+    closeSheet(); renderTeam(); renderSched();
+    return;
+  }
+
+  if (action === 'do-del-coach') {
+    const name = LS.coaches().find(x=>x.id===id)?.name || 'coach';
+    requirePin(() => { LS.saveCoaches(LS.coaches().filter(x=>x.id!==id)); closeSheet(); renderTeam(); renderSched(); }, `Delete ${name}?`);
+    return;
+  }
+
+  if (action === 'do-add-vol') {
+    const name  = document.getElementById('sf-name')?.value.trim();
+    const group = selectedGrp() || null;
+    if (!name) { document.getElementById('sf-name')?.focus(); return; }
+    const list = LS.volunteers();
+    list.push({id: uid(), name, group});
+    LS.saveVols(list);
+    closeSheet(); renderTeam(); renderSched();
+    return;
+  }
+
+  if (action === 'do-edit-vol') {
+    const name  = document.getElementById('sf-name')?.value.trim();
+    const group = selectedGrp() || null;
+    if (!name) return;
+    const list = LS.volunteers();
+    const idx  = list.findIndex(x=>x.id===id);
+    if (idx !== -1) { list[idx].name = name; list[idx].group = group; LS.saveVols(list); }
+    closeSheet(); renderTeam(); renderSched();
+    return;
+  }
+
+  if (action === 'do-del-vol') {
+    const name = LS.volunteers().find(x=>x.id===id)?.name || 'volunteer';
+    requirePin(() => { LS.saveVols(LS.volunteers().filter(x=>x.id!==id)); closeSheet(); renderTeam(); renderSched(); }, `Delete ${name}?`);
+    return;
+  }
+
+  // ── BUS ACTIONS ──
+  if (action === 'do-add-bus') {
+    const name = document.getElementById('sf-busname')?.value.trim();
+    const loc  = document.getElementById('sf-busloc')?.value.trim();
+    if (!name) { document.getElementById('sf-busname')?.focus(); return; }
+    if (!loc)  { document.getElementById('sf-busloc')?.focus();  return; }
+    const list = LS.buses();
+    list.push({id: uid(), name, location: loc});
+    LS.saveBuses(list);
+    closeSheet(); renderBuses();
+    return;
+  }
+
+  if (action === 'do-del-bus') {
+    const busId = el.dataset.id;
+    const busName = LS.buses().find(b=>b.id===busId)?.name || 'bus';
+    requirePin(() => {
+      LS.saveKids(LS.kids().filter(k => k.busId !== busId));
+      LS.saveCoaches(LS.coaches().map(c => c.busId === busId ? {...c, busId: null} : c));
+      LS.saveVols(LS.volunteers().map(v => v.busId === busId ? {...v, busId: null} : v));
+      LS.saveBuses(LS.buses().filter(b => b.id !== busId));
+      closeSheet(); renderBuses();
+    }, `Delete ${busName} and all its assignments?`);
+    return;
+  }
+
+  if (action === 'do-add-kid') {
+    const busId = el.dataset.bus;
+    const name  = document.getElementById('sf-kidname')?.value.trim();
+    if (!name) { document.getElementById('sf-kidname')?.focus(); return; }
+    const list = LS.kids();
+    list.push({id: uid(), name, busId});
+    LS.saveKids(list);
+    sheetBusDetail(busId);
+    return;
+  }
+
+  if (action === 'rm-kid') {
+    const kidName = LS.kids().find(k=>k.id===el.dataset.id)?.name || 'kid';
+    const busId = el.dataset.bus;
+    requirePin(() => { LS.saveKids(LS.kids().filter(k => k.id !== el.dataset.id)); sheetBusDetail(busId); }, `Remove ${kidName} from bus?`);
+    return;
+  }
+
+  if (action === 'rm-bus-coach') {
+    LS.saveCoaches(LS.coaches().map(c => c.id === el.dataset.id ? {...c, busId: null} : c));
+    sheetBusDetail(el.dataset.bus);
+    return;
+  }
+
+  if (action === 'rm-bus-vol') {
+    LS.saveVols(LS.volunteers().map(v => v.id === el.dataset.id ? {...v, busId: null} : v));
+    sheetBusDetail(el.dataset.bus);
+    return;
+  }
+
+  if (action === 'pick-bus-coach') { sheetBusCoachPicker(el.dataset.bus); return; }
+  if (action === 'pick-bus-vol')   { sheetBusVolPicker(el.dataset.bus);   return; }
+
+  // ── REGISTRATION ACTIONS ──
+  if (action === 'reg-assign-bus') { sheetRegBusPicker(el.dataset.id); return; }
+
+  if (action === 'do-reg-assign-bus') {
+    const regs = getRegs();
+    const reg  = regs.find(r => r.id === el.dataset.regid);
+    if (!reg) return;
+    const grpMap = {'4-6':'little','7-10':'rising','11-14':'future'};
+    const kids = LS.kids();
+    kids.push({id: uid(), name: reg.cname, busId: el.dataset.bus, group: grpMap[reg.group]||null, fromReg: reg.id});
+    LS.saveKids(kids);
+    saveRegs(regs.map(r => r.id===reg.id ? {...r, status:'assigned'} : r));
+    closeSheet(); renderRegistrations(); renderBuses();
+    return;
+  }
+
+  if (action === 'reg-quick-add') {
+    const regs = getRegs();
+    const reg  = regs.find(r => r.id === el.dataset.regid);
+    if (!reg) return;
+    const grpMap = {'4-6':'little','7-10':'rising','11-14':'future'};
+    const kids = LS.kids();
+    kids.push({id: uid(), name: reg.cname, busId: el.dataset.bus, group: grpMap[reg.group]||null, fromReg: reg.id});
+    LS.saveKids(kids);
+    saveRegs(regs.map(r => r.id===reg.id ? {...r, status:'assigned'} : r));
+    sheetBusDetail(el.dataset.bus);
+    return;
+  }
+
+  if (action === 'reg-confirm') {
+    saveRegs(getRegs().map(r => r.id===el.dataset.id ? {...r, status:'confirmed'} : r));
+    renderRegistrations();
+    return;
+  }
+
+  if (action === 'reg-delete') {
+    const regName = getRegs().find(r=>r.id===el.dataset.id)?.cname || 'registration';
+    requirePin(() => { saveRegs(getRegs().filter(r => r.id!==el.dataset.id)); renderRegistrations(); }, `Delete registration for ${regName}?`);
+    return;
+  }
+
+  if (action === 'do-bus-coach') {
+    const coaches = LS.coaches();
+    const c = coaches.find(x => x.id === el.dataset.id);
+    if (!c) return;
+    LS.saveCoaches(coaches.map(x => x.id === el.dataset.id ? {...x, busId: c.busId === el.dataset.bus ? null : el.dataset.bus} : x));
+    sheetBusCoachPicker(el.dataset.bus);
+    return;
+  }
+
+  if (action === 'do-bus-vol') {
+    const vols = LS.volunteers();
+    const v = vols.find(x => x.id === el.dataset.id);
+    if (!v) return;
+    LS.saveVols(vols.map(x => x.id === el.dataset.id ? {...x, busId: v.busId === el.dataset.bus ? null : el.dataset.bus} : x));
+    sheetBusVolPicker(el.dataset.bus);
+    return;
+  }
+});
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+
+_setupSync();
+_fetchSheetTeam();
+setInterval(_fetchSheetTeam, 5 * 60 * 1000);
+_fetchSheetRegs();
+setInterval(_fetchSheetRegs, 5 * 60 * 1000);
+activeDay = todayKey() || 'sunday';
+renderDayTabs(); renderNow(); renderPools(); renderSched();
+tickClock();
+setInterval(tickClock, 1000);
+setInterval(() => {
+  renderNow(); renderPools();
+  if (!document.querySelector('#sheet.open')) renderSched();
+}, 30000);
+</script>
+</body>
+</html>

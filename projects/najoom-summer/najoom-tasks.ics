@@ -1,0 +1,179 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Najoom Summer 2026//Tasks//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Najoom Summer 2026 — Tasks
+X-WR-TIMEZONE:Asia/Amman
+
+BEGIN:VEVENT
+UID:najoom-pricing-001@najoom2026
+DTSTART:20260601T090000
+DTEND:20260601T093000
+SUMMARY:★ Najoom: Lock pricing + confirm partnership
+DESCRIPTION:Approve pricing packages and confirm partnership agreement with Dunes Club and Najoom. Without this, registrations can't convert.\n\nSheet: https://docs.google.com/spreadsheets/d/1aUU3_InbTU2r2LfLOCGx6_wjwcQIkAHwvB4whK0B0fI
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+
+BEGIN:VEVENT
+UID:najoom-recruitment-002@najoom2026
+DTSTART:20260602T090000
+DTEND:20260602T093000
+SUMMARY:★ Najoom: Start coach & volunteer recruitment
+DESCRIPTION:Post open roles for coaches and volunteers. Need 21 coaches and 42 volunteers confirmed by June 10.\n\nTeam Tracker: https://docs.google.com/spreadsheets/d/1nm7QR0ozwn0_CmX_8nlmpHd8uOp16Fj63N08WuKwel4
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+
+BEGIN:VEVENT
+UID:najoom-social-003@najoom2026
+DTSTART:20260602T110000
+DTEND:20260602T113000
+SUMMARY:★ Najoom: Launch social media announcement
+DESCRIPTION:Najoom announcement campaign goes live on Instagram. Registration campaign active. Coordinate with Najoom team.
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+
+BEGIN:VEVENT
+UID:najoom-instructors-004@najoom2026
+DTSTART:20260603T090000
+DTEND:20260603T093000
+SUMMARY:★ Najoom: Contact all specialized instructors
+DESCRIPTION:Reach out to: Swimming coaches x3, Taekwondo, Kickboxing, MMA, Ballet, Arts & Crafts x2.\n\nTeam Tracker: https://docs.google.com/spreadsheets/d/1nm7QR0ozwn0_CmX_8nlmpHd8uOp16Fj63N08WuKwel4
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+
+BEGIN:VEVENT
+UID:najoom-shoot-005@najoom2026
+DTSTART:20260603T120000
+DTEND:20260603T123000
+SUMMARY:★ Najoom: On-site content shoot at Dunes Club
+DESCRIPTION:Photography and video content shoot at Dunes Club for marketing campaign. Coordinate with Najoom team.
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+
+BEGIN:VEVENT
+UID:najoom-schedule-006@najoom2026
+DTSTART:20260603T150000
+DTEND:20260603T153000
+SUMMARY:★ Najoom: Lock weekly schedule template
+DESCRIPTION:Finalize the daily/weekly program schedule for all three age groups. Must be done before staff orientation.
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+
+BEGIN:VEVENT
+UID:najoom-uniforms-007@najoom2026
+DTSTART:20260607T090000
+DTEND:20260607T093000
+SUMMARY:★ Najoom: Order uniforms (coaches + volunteers)
+DESCRIPTION:Order uniforms for 21 coaches and t-shirts for 42 volunteers. Needs lead time — order today.\n\nBudget Sheet: https://docs.google.com/spreadsheets/d/1LxnjKUl3qWzdWdPymSKHeb2zxBWh32fEQb9X3qhl8Dw
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+
+BEGIN:VEVENT
+UID:najoom-materials-008@najoom2026
+DTSTART:20260608T090000
+DTEND:20260608T093000
+SUMMARY:★ Najoom: Order activity materials + equipment
+DESCRIPTION:Order all arts & crafts, sports equipment, water activity gear, and other activity materials.\n\nBudget Sheet: https://docs.google.com/spreadsheets/d/1LxnjKUl3qWzdWdPymSKHeb2zxBWh32fEQb9X3qhl8Dw
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+
+BEGIN:VEVENT
+UID:najoom-team-deadline-009@najoom2026
+DTSTART:20260610T090000
+DTEND:20260610T093000
+SUMMARY:★ Najoom: Team confirmation deadline
+DESCRIPTION:All 21 coaches, 42 volunteers, and specialized instructors must be confirmed by today.\n\nTeam Tracker: https://docs.google.com/spreadsheets/d/1nm7QR0ozwn0_CmX_8nlmpHd8uOp16Fj63N08WuKwel4
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+
+BEGIN:VEVENT
+UID:najoom-site-setup-010@najoom2026
+DTSTART:20260612T090000
+DTEND:20260612T093000
+SUMMARY:★ Najoom: Site setup — activity zones + branding
+DESCRIPTION:Set up all activity zones at Dunes Club. Install Najoom signage and branding. Registration desk setup.
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+
+BEGIN:VEVENT
+UID:najoom-orientation-011@najoom2026
+DTSTART:20260613T090000
+DTEND:20260613T120000
+SUMMARY:★ Najoom: Staff orientation + training day
+DESCRIPTION:Full team orientation: safety procedures, emergency response, daily operations run-through.\nAll coaches + volunteers must attend.
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+
+BEGIN:VEVENT
+UID:najoom-opening-012@najoom2026
+DTSTART:20260614T073000
+DTEND:20260614T180000
+SUMMARY:🌟 NAJOOM SUMMER — OPENING DAY
+DESCRIPTION:Opening day of Najoom Summer Experience at Dunes Club, Amman.\n\nRegistration desk active from 7:30am.\nAll coaches and volunteers on stations.\nParent WhatsApp group active.\n\nRegistrations: https://docs.google.com/spreadsheets/d/1Fzp_wWOwZv0W_Y1A6J9Zy-lmzyI_eIH5YV_SK1ZhXVc
+BEGIN:VALARM
+TRIGGER:-PT60M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+
+BEGIN:VEVENT
+UID:najoom-weekly-ops-013@najoom2026
+DTSTART:20260618T100000
+DTEND:20260618T110000
+SUMMARY:★ Najoom: Weekly Ops Meeting
+DESCRIPTION:Weekly operations meeting — every Thursday.\n\nAgenda: Registration numbers / Parent feedback / Staffing updates / Activity review / Marketing updates / Family Day planning\n\nControl Center: https://docs.google.com/spreadsheets/d/1aUU3_InbTU2r2LfLOCGx6_wjwcQIkAHwvB4whK0B0fI
+RRULE:FREQ=WEEKLY;BYDAY=TH;COUNT=8
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+
+END:VCALENDAR
